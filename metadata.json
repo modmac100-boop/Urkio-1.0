@@ -1,0 +1,9 @@
+{
+  "name": "Urkio - Your Journey within 1.0",
+  "description": "A comprehensive holistic health community platform connecting users with experts in medicine, psychology, and nutrition, featuring AI-guided reflections and supportive circles.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

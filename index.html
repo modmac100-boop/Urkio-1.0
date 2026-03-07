@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Urkio - Your Journey Within</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              primary: "#135bec",
+              secondary: "#ec13ec",
+              "urkio-magenta": "#d946ef",
+              "urkio-blue": "#135bec",
+              "urkio-green": "#10b981",
+              "background-dark": "#0a0a1a",
+              "surface-dark": "#12122a",
+              "card-dark": "#1a1a2e",
+              "accent-cyan": "#00f2ff",
+            },
+            fontFamily: {
+              sans: ["Inter", "Noto Sans Arabic", "sans-serif"],
+              display: ["Epilogue", "Noto Sans Arabic", "sans-serif"],
+            },
+            borderRadius: {
+              '4xl': '2rem',
+              '5xl': '2.5rem',
+              '6xl': '3rem',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      [dir="rtl"] .material-symbols-outlined:not(.no-mirror) {
+        transform: scaleX(-1);
+      }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .fill-1 {
+        font-variation-settings: 'FILL' 1;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      
+      /* Glass surface principle: Blur + Border + High Transparency */
+      .crystal-glass {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        box-shadow: 
+          inset 0 1px 2px rgba(255, 255, 255, 0.5),
+          0 10px 40px rgba(0, 0, 0, 0.03);
+      }
+      
+      .dark .crystal-glass {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 
+          inset 0 1px 1px rgba(255, 255, 255, 0.05),
+          0 20px 50px rgba(0, 0, 0, 0.3);
+      }
+
+      .urkio-gradient {
+        background: linear-gradient(135deg, #d946ef 0%, #135bec 100%);
+      }
+      
+      .diet-gradient {
+        background: linear-gradient(135deg, #10b981 0%, #135bec 100%);
+      }
+
+      .gold-gradient {
+        background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+      }
+
+      .crystal-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .crystal-btn::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent);
+        transform: rotate(45deg);
+        transition: 0.8s;
+        pointer-events: none;
+      }
+      
+      .crystal-btn:hover::after {
+        left: 100%;
+      }
+
+      .icon-crystal {
+        background: linear-gradient(135deg, #d946ef 0%, #135bec 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 0 12px rgba(19, 91, 236, 0.3));
+      }
+
+      .glow-primary {
+        box-shadow: 0 0 25px rgba(19, 91, 236, 0.4);
+      }
+      
+      .glow-magenta {
+        box-shadow: 0 0 25px rgba(217, 70, 239, 0.4);
+      }
+
+      /* Logo Shining Movement Animation */
+      @keyframes logo-dash {
+        0% { stroke-dashoffset: 500; }
+        100% { stroke-dashoffset: 0; }
+      }
+      .animate-logo-shine {
+        stroke-dasharray: 60 240; /* 60px shine segment, 240px gap */
+        animation: logo-dash 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        filter: drop-shadow(0 0 4px white);
+      }
+
+      @keyframes shimmer {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+      }
+      
+      @keyframes float-smooth {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+
+      @keyframes aurora {
+        0%, 100% { transform: translate(0, 0) scale(1); }
+        33% { transform: translate(10%, 10%) scale(1.1); }
+        66% { transform: translate(-5%, 5%) scale(0.9); }
+      }
+
+      @keyframes breathe {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50% { transform: scale(1.05); opacity: 1; }
+      }
+
+      .animate-shimmer {
+        animation: shimmer 2s infinite linear;
+      }
+      
+      .animate-float {
+        animation: float-smooth 4s ease-in-out infinite;
+      }
+
+      .animate-aurora {
+        animation: aurora 20s infinite alternate ease-in-out;
+      }
+
+      .animate-breathe {
+        animation: breathe 3s ease-in-out infinite;
+      }
+
+      .smooth-aura {
+        background: radial-gradient(circle at 10% 20%, rgba(217, 70, 239, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 90% 80%, rgba(19, 91, 236, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.02) 0%, transparent 50%);
+      }
+
+      body {
+        font-family: 'Inter', 'Noto Sans Arabic', sans-serif;
+        background-color: #f9fafb;
+        transition: background-color 0.5s ease;
+      }
+
+      body.dark {
+        background-color: #0a0a1a;
+      }
+    </style>
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "@google/genai": "https://esm.sh/@google/genai@1.3.0",
+    "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.7",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body class="transition-all duration-300">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
