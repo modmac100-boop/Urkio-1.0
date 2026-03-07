@@ -1,3 +1,10 @@
 runConfig:
   runtime: nodejs20
-  environmentVariables: []
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 10
+
+outputFiles:
+  serverOutputDirectory: /
