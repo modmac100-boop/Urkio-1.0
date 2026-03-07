@@ -80,8 +80,8 @@ const SplashView: React.FC<Props> = ({ onComplete }) => {
 
         {/* Text Appearance */}
         <div className={`mt-8 flex flex-col items-center transition-all duration-1000 transform ${stage === 'TEXT_REVEAL' || stage === 'FINISHING'
-            ? 'translate-y-0 opacity-100 scale-100'
-            : 'translate-y-10 opacity-0 scale-95'
+          ? 'translate-y-0 opacity-100 scale-100'
+          : 'translate-y-10 opacity-0 scale-95'
           }`}>
           <h1 className="text-6xl font-black font-display tracking-tighter text-white drop-shadow-2xl text-center">
             Urkio
@@ -101,6 +101,7 @@ const SplashView: React.FC<Props> = ({ onComplete }) => {
             <div className="size-1 bg-primary rounded-full animate-bounce [animation-delay:400ms]"></div>
           </div>
           <p className="text-[9px] font-black uppercase tracking-[0.3em] text-slate-500">Initializing Secure Port...</p>
+          <p className="text-[8px] font-bold text-slate-700 tracking-widest mt-1">v1.0 · Live on urkio.com</p>
         </div>
       </div>
 
