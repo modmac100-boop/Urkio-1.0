@@ -151,7 +151,7 @@ const App: React.FC = () => {
           AppScreen.SPLASH, AppScreen.LANDING, AppScreen.AUTH, AppScreen.PASSWORD_RECOVERY,
           AppScreen.EXPERT_ONBOARDING, AppScreen.EXPERT_SIGNUP_INFO,
           AppScreen.EXPERT_SIGNUP_VERIFICATION, AppScreen.EXPERT_SIGNUP_FOCUS,
-          AppScreen.EXPERT_REVIEW_STATUS
+          AppScreen.EXPERT_REVIEW_STATUS, AppScreen.SECURE_PORTAL
         ];
         if (!publicScreens.includes(currentScreen)) {
           setCurrentScreen(AppScreen.LANDING);
