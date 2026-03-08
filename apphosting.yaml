@@ -6,8 +6,5 @@ runConfig:
   minInstances: 0
   maxInstances: 10
 
-# Set the root directory so App Hosting uses the Expo app's package.json
-rootDirectory: Urkio-Mobile
-
 outputFiles:
-  serverOutputDirectory: dist
+  serverOutputDirectory: /
