@@ -10,7 +10,7 @@ import {
     StatusBar,
     useWindowDimensions
 } from 'react-native';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { Languages, LayoutList, LogIn, User, Stethoscope, Share2 } from 'lucide-react-native';
 import { UrkioLogo } from '../components/universal/UrkioLogo';
 import { UrkioGradient } from '../components/universal/UrkioGradient';
@@ -21,6 +21,7 @@ type Language = 'en' | 'ar' | 'fr';
 type Variant = 'calm' | 'luxe';
 
 export default function LandingPage() {
+    const router = useRouter();
     const [language, setLanguage] = useState<Language>('en');
     const [variant, setVariant] = useState<Variant>('calm');
     const { width, height } = useWindowDimensions();
@@ -68,10 +69,8 @@ export default function LandingPage() {
     };
 
     const handleJoin = (role: 'member' | 'expert') => {
-        console.log(`Joining as ${role}`);
-        if (Platform.OS === 'web') {
-            window.alert(`Joining as ${role}`);
-        }
+        console.log(`Routing to sign in as ${role}`);
+        router.push(`/(auth)/sign-in?role=${role}` as any);
     };
 
     const isRTL = language === 'ar';
