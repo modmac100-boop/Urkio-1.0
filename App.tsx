@@ -147,7 +147,12 @@ const App: React.FC = () => {
         setUserRole('USER');
 
         // If user logs out and is on a protected screen, redirect to Landing
-        const publicScreens = [AppScreen.SPLASH, AppScreen.LANDING, AppScreen.AUTH, AppScreen.PASSWORD_RECOVERY];
+        const publicScreens = [
+          AppScreen.SPLASH, AppScreen.LANDING, AppScreen.AUTH, AppScreen.PASSWORD_RECOVERY,
+          AppScreen.EXPERT_ONBOARDING, AppScreen.EXPERT_SIGNUP_INFO,
+          AppScreen.EXPERT_SIGNUP_VERIFICATION, AppScreen.EXPERT_SIGNUP_FOCUS,
+          AppScreen.EXPERT_REVIEW_STATUS
+        ];
         if (!publicScreens.includes(currentScreen)) {
           setCurrentScreen(AppScreen.LANDING);
         }

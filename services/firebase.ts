@@ -5,7 +5,7 @@ import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
     apiKey: "AIzaSyDL3Lu07yGva9f_pICmLQY7dCwWWixCIDA",
-    authDomain: "urkio-65fb0.firebaseapp.com",
+    authDomain: "urkio.com",
     projectId: "urkio-65fb0",
     storageBucket: "urkio-65fb0.firebasestorage.app",
     messagingSenderId: "381336389343",
