@@ -5,8 +5,8 @@ import { UserRole, AppScreen } from '../types';
 interface Props {
   onJoin: (role: UserRole) => void;
   navigate: (screen: AppScreen) => void;
-  language: 'en' | 'ar';
-  setLanguage: (lang: 'en' | 'ar') => void;
+  language: 'en' | 'ar' | 'fr';
+  setLanguage: (lang: 'en' | 'ar' | 'fr') => void;
 }
 
 const UrkioLogo = ({ className = "size-20", color = "url(#logoGradLanding)" }: { className?: string, color?: string }) => (
@@ -56,6 +56,14 @@ const LandingView: React.FC<Props> = ({ onJoin, navigate, language, setLanguage 
     signIn: 'تسجيل الدخول',
     calm: 'هادئ',
     luxe: 'فاخر'
+  } : language === 'fr' ? {
+    welcome: 'Bienvenue sur',
+    memberLabel: 'Rejoindre en tant que membre',
+    expertLabel: 'Rejoindre en tant qu\'expert',
+    alreadyMember: 'Déjà membre ?',
+    signIn: 'Se connecter',
+    calm: 'Calme',
+    luxe: 'Luxe'
   } : {
     welcome: 'Welcome to',
     memberLabel: 'Join as Member',
@@ -90,10 +98,10 @@ const LandingView: React.FC<Props> = ({ onJoin, navigate, language, setLanguage 
 
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+              onClick={() => setLanguage(language === 'en' ? 'fr' : language === 'fr' ? 'ar' : 'en')}
               className={`px-3 py-1.5 rounded-xl crystal-glass text-[9px] font-black uppercase tracking-widest transition-all active:scale-90 crystal-btn ${isLuxe ? 'text-white hover:text-primary' : 'text-slate-900 hover:text-primary'}`}
             >
-              {language === 'en' ? 'AR' : 'EN'}
+              {language === 'en' ? 'FR' : language === 'fr' ? 'AR' : 'EN'}
             </button>
             <div className={`flex crystal-glass rounded-xl p-1 shadow-lg border ${isLuxe ? 'border-white/10' : 'border-slate-200'}`}>
               <button onClick={() => setActiveVariant('calm')} className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${!isLuxe ? 'bg-white text-slate-900 shadow-sm' : 'text-white/40'}`}>{t.calm}</button>

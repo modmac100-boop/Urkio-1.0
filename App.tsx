@@ -103,7 +103,7 @@ const DEFAULT_EXPERT: Expert = {
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(AppScreen.SPLASH);
   const [userRole, setUserRole] = useState<UserRole>('USER');
-  const [language, setLanguage] = useState<'en' | 'ar'>('en');
+  const [language, setLanguage] = useState<'en' | 'ar' | 'fr'>('en');
   const [session, setSession] = useState<any>(null);
 
   // Persistent Dark Mode State

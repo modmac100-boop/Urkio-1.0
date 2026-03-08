@@ -4,7 +4,7 @@ import { AppScreen } from '../types';
 
 interface Props {
   navigate: (screen: AppScreen) => void;
-  language: 'en' | 'ar';
+  language: 'en' | 'ar' | 'fr';
 }
 
 type VisibilityType = 'public' | 'followers' | 'private';
@@ -58,6 +58,20 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
     private: 'خاص',
     privateDesc: 'خزنة Homii',
     media: ['رفع صورة', 'رفع فيديو', 'تسجيل فيديو', 'ستوري', 'صوت']
+  } : language === 'fr' ? {
+    header: 'Créer un post',
+    share: 'Partager',
+    posting: 'Publication...',
+    anonymous: 'Anonyme',
+    placeholder: 'Partagez une idée, posez une question ou racontez votre journée...',
+    visibilityTitle: 'Protocole de visibilité',
+    public: 'Public',
+    publicDesc: 'Visible par tous',
+    followers: 'Abonnés',
+    followersDesc: 'Votre cercle',
+    private: 'Privé',
+    privateDesc: 'Mon coffre-fort',
+    media: ['Photo', 'Vidéo', 'Enregistrer', 'Story', 'Audio']
   } : {
     header: 'Create Post',
     share: 'Share',

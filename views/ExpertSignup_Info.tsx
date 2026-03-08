@@ -4,7 +4,7 @@ import { AppScreen } from '../types';
 
 interface Props {
   navigate: (screen: AppScreen) => void;
-  language: 'en' | 'ar';
+  language: 'en' | 'ar' | 'fr';
 }
 
 const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
@@ -29,6 +29,22 @@ const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
     bioPlaceholder: 'أخبر الباحثين عن أسلوبك وشغفك بالعافية...',
     continue: 'استمرار',
     step: 'خطوة الطلب 1 من 3'
+  } : language === 'fr' ? {
+    header: 'Infos professionnelles',
+    sub: 'Dites-nous en plus sur votre carrière et vos antécédents professionnels.',
+    roleLabel: 'Type de rôle professionnel',
+    clinical: 'Spécialiste clinique',
+    clinicalDesc: 'Médecin, Psychologue',
+    manager: 'Gestionnaire de cas',
+    managerDesc: 'Triage, Coordination',
+    dietitian: 'Diététicien',
+    dietitianDesc: 'Nutrition fonctionnelle, Santé intestinale',
+    titleLabel: 'Titre professionnel',
+    expLabel: 'Années d\'expérience',
+    bioLabel: 'Courte biographie',
+    bioPlaceholder: 'Parlez aux chercheurs de votre approche...',
+    continue: 'Continuer',
+    step: 'Étape 1 sur 3'
   } : {
     header: 'Professional Info',
     sub: 'Let us know more about your career and professional background.',
@@ -62,7 +78,7 @@ const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
   return (
     <div className="relative min-h-screen w-full flex flex-col bg-background-dark text-white max-w-md mx-auto shadow-2xl font-sans overflow-hidden">
       <div className={`absolute top-0 left-0 w-full h-96 urkio-gradient opacity-10 blur-[100px] -translate-y-1/2 transition-colors duration-700 ${isDietMode ? 'hue-rotate-[140deg]' : ''}`}></div>
-      
+
       <header className="relative z-10 p-8 flex items-center justify-between">
         <button onClick={() => navigate(AppScreen.EXPERT_ONBOARDING)} className="size-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 active:scale-90 transition-transform">
           <span className={`material-symbols-outlined text-[22px] ${language === 'ar' ? 'rotate-180' : ''}`}>arrow_back_ios_new</span>
@@ -83,54 +99,54 @@ const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
         <div className="space-y-10 flex-1">
           {/* Role Selection */}
           <div className="space-y-4">
-             <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 transition-colors ${themeColor}`}>{t.roleLabel}</label>
-             <div className="grid grid-cols-1 gap-3">
-                <button 
-                  onClick={() => handleRoleChange('CLINICAL')}
-                  className={`p-5 rounded-[2rem] border-2 text-left flex items-center gap-4 transition-all ${roleType === 'CLINICAL' ? 'bg-primary/10 border-primary shadow-lg' : 'bg-white/5 border-white/5 opacity-60'}`}
-                >
-                   <div className={`size-12 rounded-xl flex items-center justify-center ${roleType === 'CLINICAL' ? 'bg-primary text-white' : 'bg-white/5 text-slate-500'}`}>
-                      <span className="material-symbols-outlined">medical_services</span>
-                   </div>
-                   <div className="flex-1">
-                      <p className="text-sm font-black">{t.clinical}</p>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.clinicalDesc}</p>
-                   </div>
-                </button>
+            <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 transition-colors ${themeColor}`}>{t.roleLabel}</label>
+            <div className="grid grid-cols-1 gap-3">
+              <button
+                onClick={() => handleRoleChange('CLINICAL')}
+                className={`p-5 rounded-[2rem] border-2 text-left flex items-center gap-4 transition-all ${roleType === 'CLINICAL' ? 'bg-primary/10 border-primary shadow-lg' : 'bg-white/5 border-white/5 opacity-60'}`}
+              >
+                <div className={`size-12 rounded-xl flex items-center justify-center ${roleType === 'CLINICAL' ? 'bg-primary text-white' : 'bg-white/5 text-slate-500'}`}>
+                  <span className="material-symbols-outlined">medical_services</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-black">{t.clinical}</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.clinicalDesc}</p>
+                </div>
+              </button>
 
-                <button 
-                  onClick={() => handleRoleChange('DIETITIAN')}
-                  className={`p-5 rounded-[2rem] border-2 text-left flex items-center gap-4 transition-all ${roleType === 'DIETITIAN' ? 'bg-urkio-green/10 border-urkio-green shadow-lg' : 'bg-white/5 border-white/5 opacity-60'}`}
-                >
-                   <div className={`size-12 rounded-xl flex items-center justify-center ${roleType === 'DIETITIAN' ? 'bg-urkio-green text-white' : 'bg-white/5 text-slate-500'}`}>
-                      <span className="material-symbols-outlined">restaurant</span>
-                   </div>
-                   <div className="flex-1">
-                      <p className="text-sm font-black">{t.dietitian}</p>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.dietitianDesc}</p>
-                   </div>
-                </button>
+              <button
+                onClick={() => handleRoleChange('DIETITIAN')}
+                className={`p-5 rounded-[2rem] border-2 text-left flex items-center gap-4 transition-all ${roleType === 'DIETITIAN' ? 'bg-urkio-green/10 border-urkio-green shadow-lg' : 'bg-white/5 border-white/5 opacity-60'}`}
+              >
+                <div className={`size-12 rounded-xl flex items-center justify-center ${roleType === 'DIETITIAN' ? 'bg-urkio-green text-white' : 'bg-white/5 text-slate-500'}`}>
+                  <span className="material-symbols-outlined">restaurant</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-black">{t.dietitian}</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.dietitianDesc}</p>
+                </div>
+              </button>
 
-                <button 
-                  onClick={() => handleRoleChange('CASE_MANAGER')}
-                  className={`p-5 rounded-[2rem] border-2 text-left flex items-center gap-4 transition-all ${roleType === 'CASE_MANAGER' ? 'bg-urkio-magenta/10 border-urkio-magenta shadow-lg' : 'bg-white/5 border-white/5 opacity-60'}`}
-                >
-                   <div className={`size-12 rounded-xl flex items-center justify-center ${roleType === 'CASE_MANAGER' ? 'bg-urkio-magenta text-white' : 'bg-white/5 text-slate-500'}`}>
-                      <span className="material-symbols-outlined">hub</span>
-                   </div>
-                   <div className="flex-1">
-                      <p className="text-sm font-black">{t.manager}</p>
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.managerDesc}</p>
-                   </div>
-                </button>
-             </div>
+              <button
+                onClick={() => handleRoleChange('CASE_MANAGER')}
+                className={`p-5 rounded-[2rem] border-2 text-left flex items-center gap-4 transition-all ${roleType === 'CASE_MANAGER' ? 'bg-urkio-magenta/10 border-urkio-magenta shadow-lg' : 'bg-white/5 border-white/5 opacity-60'}`}
+              >
+                <div className={`size-12 rounded-xl flex items-center justify-center ${roleType === 'CASE_MANAGER' ? 'bg-urkio-magenta text-white' : 'bg-white/5 text-slate-500'}`}>
+                  <span className="material-symbols-outlined">hub</span>
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm font-black">{t.manager}</p>
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{t.managerDesc}</p>
+                </div>
+              </button>
+            </div>
           </div>
 
           <div className="space-y-2 group">
             <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 transition-colors ${themeColor}`}>{t.titleLabel}</label>
             <div className="relative">
               <span className={`material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-[20px] transition-colors ${themeColor}`}>badge</span>
-              <input 
+              <input
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 className={`w-full h-16 pl-14 pr-5 bg-white/5 border border-white/10 rounded-[1.25rem] focus:ring-2 transition-all font-medium text-sm text-white ${isDietMode ? 'focus:ring-urkio-green/40' : 'focus:ring-primary/40'}`}
@@ -143,7 +159,7 @@ const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
             <label className={`text-[10px] font-black uppercase tracking-[0.2em] ml-1 transition-colors ${themeColor}`}>{t.expLabel}</label>
             <div className="relative">
               <span className={`material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-[20px] transition-colors ${themeColor}`}>history</span>
-              <input 
+              <input
                 type="number"
                 value={experience}
                 onChange={e => setExperience(e.target.value)}
@@ -155,12 +171,11 @@ const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
         </div>
 
         <footer className="mt-12">
-          <button 
+          <button
             disabled={!title || !experience}
             onClick={() => navigate(AppScreen.EXPERT_SIGNUP_VERIFICATION)}
-            className={`w-full h-16 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-30 disabled:grayscale ${
-              isDietMode ? 'bg-urkio-green shadow-urkio-green/20' : 'urkio-gradient shadow-primary/30'
-            }`}
+            className={`w-full h-16 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-30 disabled:grayscale ${isDietMode ? 'bg-urkio-green shadow-urkio-green/20' : 'urkio-gradient shadow-primary/30'
+              }`}
           >
             {t.continue}
             <span className={`material-symbols-outlined text-[18px] ${language === 'ar' ? 'rotate-180' : ''}`}>arrow_forward</span>

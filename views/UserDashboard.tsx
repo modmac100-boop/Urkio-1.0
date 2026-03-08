@@ -9,8 +9,8 @@ import { Avatar } from '../components/Avatar';
 
 interface Props {
   navigate: (screen: AppScreen) => void;
-  language: 'en' | 'ar';
-  setLanguage: (lang: 'en' | 'ar') => void;
+  language: 'en' | 'ar' | 'fr';
+  setLanguage: (lang: 'en' | 'ar' | 'fr') => void;
   isDarkMode: boolean;
   toggleDarkMode: () => void;
 }
@@ -117,6 +117,27 @@ const UserDashboard: React.FC<Props> = ({ navigate, language, setLanguage, isDar
       achieved: 'أهداف محققة',
       members: 'إجمالي الأعضاء'
     }
+  } : language === 'fr' ? {
+    welcome: `Bonjour ${userName},`,
+    legendDesc: 'Votre voyage légendaire est célébré.',
+    hallOfFame: 'Temple de la renommée',
+    hallOfFameStatus: 'Statut de légende d\'élite actif',
+    milestone: 'Étape majeure atteinte',
+    milestoneDesc: "Vous avez atteint le 30ème jour !",
+    actionPlan: 'Plan d\'action actif',
+    actionPlanDesc: 'Vous avez 4 tâches du Dr Aris aujourd\'hui',
+    homiiTitle: 'Homii',
+    homiiDesc: 'Enregistrez une nouvelle réflexion personnelle.',
+    interactiveFeature: 'Fonctionnalité interactive',
+    mindfulEating: 'Alimentation consciente',
+    target: 'Cible : 5 jours/semaine',
+    pulseTitle: 'Pouls de la communauté',
+    stats: {
+      live: 'En direct',
+      progress: 'En cours',
+      achieved: 'Atteint',
+      members: 'Membres'
+    }
   } : {
     welcome: `Hi ${userName},`,
     legendDesc: 'Your legend journey is being celebrated.',
@@ -168,10 +189,10 @@ const UserDashboard: React.FC<Props> = ({ navigate, language, setLanguage, isDar
           </button>
 
           <button
-            onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')}
+            onClick={() => setLanguage(language === 'en' ? 'fr' : language === 'fr' ? 'ar' : 'en')}
             className="px-3 py-2 rounded-2xl crystal-glass text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400 hover:text-primary transition-all active:scale-90 crystal-btn"
           >
-            {language === 'en' ? 'AR' : 'EN'}
+            {language === 'en' ? 'FR' : language === 'fr' ? 'AR' : 'EN'}
           </button>
           <button onClick={() => navigate(AppScreen.USER_PROFILE)} className="active:scale-90 transition-all hover:scale-110">
             <Avatar src={auth.currentUser?.photoURL || "https://picsum.photos/seed/u4/100/100"} size="sm" isHallOfFame={true} />

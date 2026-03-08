@@ -4,7 +4,7 @@ import { AppScreen } from '../types';
 
 interface Props {
   navigate: (screen: AppScreen) => void;
-  language: 'en' | 'ar';
+  language: 'en' | 'ar' | 'fr';
 }
 
 const CLINICAL_FOCUS = [
@@ -32,7 +32,7 @@ const MANAGER_FOCUS = [
 const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   // In a real app, this would be passed from Step 1 or a context
-  const isCaseManager = true; 
+  const isCaseManager = true;
 
   const toggle = (id: string) => {
     setSelected(prev => {
@@ -50,6 +50,11 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
     desc: 'اختر مجالات تخصصك الأساسية حتى نتمكن من ربطك بالباحثين المناسبين في الدليل.',
     complete: 'إكمال الإعداد',
     step: 'خطوة الطلب 3 من 3'
+  } : language === 'fr' ? {
+    title: 'Domaine de pratique',
+    desc: 'Sélectionnez vos spécialités principales afin que nous puissions vous connecter aux bons chercheurs dans l\'annuaire.',
+    complete: 'Terminer la configuration',
+    step: 'Étape 3 sur 3 de la demande'
   } : {
     title: 'Practice Focus',
     desc: 'Select your core niches so we can connect you with the right seekers in the directory.',
@@ -60,7 +65,7 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
   return (
     <div className="relative min-h-screen w-full flex flex-col bg-background-dark text-white max-w-md mx-auto shadow-2xl font-sans overflow-hidden">
       <div className="absolute bottom-0 right-0 w-full h-96 urkio-gradient opacity-10 blur-[120px] translate-y-1/2"></div>
-      
+
       <header className="relative z-10 p-8 flex items-center justify-between">
         <button onClick={() => navigate(AppScreen.EXPERT_SIGNUP_VERIFICATION)} className="size-12 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 active:scale-90 transition-transform">
           <span className={`material-symbols-outlined text-[22px] ${language === 'ar' ? 'rotate-180' : ''}`}>arrow_back_ios_new</span>
@@ -82,14 +87,13 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
           {currentFocusSet.map(area => {
             const isSelected = selected.has(area.id);
             return (
-              <button 
+              <button
                 key={area.id}
                 onClick={() => toggle(area.id)}
-                className={`flex flex-col items-center gap-4 p-6 rounded-[2.5rem] border-2 transition-all active:scale-[0.98] ${
-                  isSelected 
-                    ? 'border-primary bg-primary/10 text-primary shadow-2xl shadow-primary/20 scale-[1.05]' 
+                className={`flex flex-col items-center gap-4 p-6 rounded-[2.5rem] border-2 transition-all active:scale-[0.98] ${isSelected
+                    ? 'border-primary bg-primary/10 text-primary shadow-2xl shadow-primary/20 scale-[1.05]'
                     : 'border-white/5 bg-white/5 text-slate-500'
-                }`}
+                  }`}
               >
                 <div className={`size-14 rounded-2xl flex items-center justify-center transition-colors ${isSelected ? 'bg-primary text-white shadow-xl' : 'bg-white/5'}`}>
                   <span className={`material-symbols-outlined text-3xl ${isSelected ? 'fill-1' : ''}`}>{area.icon}</span>
@@ -101,7 +105,7 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
         </div>
 
         <footer className="mt-12">
-          <button 
+          <button
             disabled={selected.size === 0}
             onClick={() => navigate(AppScreen.EXPERT_REVIEW_STATUS)}
             className="w-full h-16 urkio-gradient rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-30 disabled:grayscale"

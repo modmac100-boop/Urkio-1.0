@@ -38,7 +38,7 @@ const MOCK_EXPERTS: Expert[] = [
 
 interface Props {
   navigate: (screen: AppScreen, expert?: Expert, query?: string) => void;
-  language: 'en' | 'ar';
+  language: 'en' | 'ar' | 'fr';
 }
 
 const ExpertDiscovery: React.FC<Props> = ({ navigate, language }) => {
@@ -56,6 +56,17 @@ const ExpertDiscovery: React.FC<Props> = ({ navigate, language }) => {
     noResultsDesc: 'جرب كلمة بحث أخرى أو فئة مختلفة.',
     profile: 'الملف الشخصي',
     exp: 'خبرة'
+  } : language === 'fr' ? {
+    header: 'Découverte d\'experts',
+    searchPlaceholder: 'Chercher par nom ou spécialité...',
+    all: 'Tous les experts',
+    psychologists: 'Psychologues',
+    dietitians: 'Diététiciens',
+    doctors: 'Médecins',
+    noResults: 'Aucun résultat',
+    noResultsDesc: 'Essayez un autre mot-clé ou catégorie.',
+    profile: 'Profil',
+    exp: 'exp'
   } : {
     header: 'Expert Discovery',
     searchPlaceholder: 'Search by name or specialty...',
@@ -78,10 +89,10 @@ const ExpertDiscovery: React.FC<Props> = ({ navigate, language }) => {
 
   const filteredExperts = useMemo(() => {
     return MOCK_EXPERTS.filter(expert => {
-      const matchesSearch = expert.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           expert.title.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesCategory = activeCategory === 'All' || 
-                             expert.title.toLowerCase().includes(activeCategory.toLowerCase().slice(0, -1));
+      const matchesSearch = expert.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        expert.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesCategory = activeCategory === 'All' ||
+        expert.title.toLowerCase().includes(activeCategory.toLowerCase().slice(0, -1));
       return matchesSearch && matchesCategory;
     });
   }, [searchQuery, activeCategory]);
@@ -98,10 +109,10 @@ const ExpertDiscovery: React.FC<Props> = ({ navigate, language }) => {
             <span className="material-symbols-outlined text-2xl">tune</span>
           </button>
         </div>
-        
+
         <div className="relative group mb-6">
           <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">search</span>
-          <input 
+          <input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-12 pr-4 py-4 bg-slate-100 dark:bg-slate-800 border-none rounded-2xl text-sm font-medium focus:ring-2 focus:ring-primary/40 transition-all placeholder:text-slate-500"
@@ -113,14 +124,13 @@ const ExpertDiscovery: React.FC<Props> = ({ navigate, language }) => {
           {categories.map(cat => {
             const isDietCat = cat.key === 'Dietitians';
             return (
-              <button 
+              <button
                 key={cat.key}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`shrink-0 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
-                  activeCategory === cat.key 
-                    ? (isDietCat ? 'bg-urkio-green text-white shadow-xl shadow-urkio-green/30 scale-105' : 'bg-primary text-white shadow-xl shadow-primary/20 scale-105') 
+                className={`shrink-0 px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${activeCategory === cat.key
+                    ? (isDietCat ? 'bg-urkio-green text-white shadow-xl shadow-urkio-green/30 scale-105' : 'bg-primary text-white shadow-xl shadow-primary/20 scale-105')
                     : 'bg-white dark:bg-slate-900 border border-gray-100 dark:border-white/10 text-slate-500'
-                }`}
+                  }`}
               >
                 {cat.label}
               </button>
@@ -137,12 +147,11 @@ const ExpertDiscovery: React.FC<Props> = ({ navigate, language }) => {
           const themeBorder = isDietitian ? 'border-urkio-green/40' : 'border-primary/20';
 
           return (
-            <div 
-              key={expert.id} 
+            <div
+              key={expert.id}
               onClick={() => navigate(AppScreen.EXPERT_PUBLIC_PROFILE, expert)}
-              className={`group relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 border transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-2xl active:scale-[0.98] ${
-                isDietitian ? 'border-urkio-green/30 ring-1 ring-urkio-green/5' : 'border-gray-100 dark:border-white/5'
-              }`}
+              className={`group relative bg-white dark:bg-slate-900 rounded-[2.5rem] p-6 border transition-all cursor-pointer overflow-hidden shadow-sm hover:shadow-2xl active:scale-[0.98] ${isDietitian ? 'border-urkio-green/30 ring-1 ring-urkio-green/5' : 'border-gray-100 dark:border-white/5'
+                }`}
             >
               <div className={`absolute top-0 right-0 w-24 h-24 ${isDietitian ? 'bg-urkio-green/20' : 'bg-accent-cyan/10'} blur-[40px] translate-x-12 -translate-y-12`}></div>
               <div className="flex gap-6 relative z-10">

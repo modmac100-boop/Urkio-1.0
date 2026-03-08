@@ -16,19 +16,19 @@ interface Milestone {
 }
 
 const JOURNEY_MILESTONES: (lang: string) => Milestone[] = (lang) => [
-   { id: 'm1', title: lang === 'ar' ? 'استشارة مع د. آريس' : 'Consultation with Dr. Aris', date: 'Oct 24, 2024', type: 'session', icon: 'videocam' },
-   { id: 'm2', title: lang === 'ar' ? 'تحقيق تتابع 7 أيام' : 'Achieved 7-Day Streak', date: 'Oct 20, 2024', type: 'milestone', icon: 'auto_awesome' },
-   { id: 'm3', title: lang === 'ar' ? 'تسجيل تأمل عميق' : 'Vocalized Deep Reflection', date: 'Oct 18, 2024', type: 'reflection', icon: 'mic' },
+   { id: 'm1', title: lang === 'ar' ? 'استشارة مع د. آريس' : lang === 'fr' ? 'Consultation avec le Dr Aris' : 'Consultation with Dr. Aris', date: 'Oct 24, 2024', type: 'session', icon: 'videocam' },
+   { id: 'm2', title: lang === 'ar' ? 'تحقيق تتابع 7 أيام' : lang === 'fr' ? 'Série de 7 jours atteinte' : 'Achieved 7-Day Streak', date: 'Oct 20, 2024', type: 'milestone', icon: 'auto_awesome' },
+   { id: 'm3', title: lang === 'ar' ? 'تسجيل تأمل عميق' : lang === 'fr' ? 'Réflexion profonde vocalisée' : 'Vocalized Deep Reflection', date: 'Oct 18, 2024', type: 'reflection', icon: 'mic' },
 ];
 
 const INITIAL_USER_POSTS: (lang: string) => Post[] = (lang) => [
    {
       id: 'up1',
       authorName: 'Alex Johnson',
-      authorType: lang === 'ar' ? 'أسطورة قاعة المشاهير' : 'Hall of Fame Legend',
+      authorType: lang === 'ar' ? 'أسطورة قاعة المشاهير' : lang === 'fr' ? 'Légende du Temple de la renommée' : 'Hall of Fame Legend',
       authorImage: 'https://picsum.photos/seed/u4/100/100',
-      content: lang === 'ar' ? "أفكر في كيفية تأثير التغييرات الصغيرة في صحة الأمعاء على تحسينات هائلة في الوضوح العقلي. كان هذا الأسبوع ملهماً جداً! 🌿" : "Reflecting on how small changes in gut health lead to massive improvements in mental clarity. This week has been an eye-opener! 🌿",
-      time: lang === 'ar' ? 'منذ ساعتين' : '2h ago',
+      content: lang === 'ar' ? "أفكر في كيفية تأثير التغييرات الصغيرة في صحة الأمعاء على تحسينات هائلة في الوضوح العقلي. كان هذا الأسبوع ملهماً جداً! 🌿" : lang === 'fr' ? "Je réfléchis à la façon dont de petits changements dans la santé intestinale peuvent entraîner des améliorations massives de la clarté mentale. Cette semaine a été une révélation ! 🌿" : "Reflecting on how small changes in gut health lead to massive improvements in mental clarity. This week has been an eye-opener! 🌿",
+      time: lang === 'ar' ? 'منذ ساعتين' : lang === 'fr' ? 'il y a 2h' : '2h ago',
       likes: 124,
       comments: 18,
       reposts: 5,
@@ -68,7 +68,7 @@ const DEFAULT_MEMBER: Member = {
 interface Props {
    navigate: (s: AppScreen, e?: Expert, q?: string, r?: Resource, c?: Circle, stories?: any[], index?: number, member?: Member) => void;
    member: Member | null;
-   language: 'en' | 'ar';
+   language: 'en' | 'ar' | 'fr';
    isDarkMode: boolean;
    toggleDarkMode: () => void;
 }
@@ -178,6 +178,43 @@ const UserProfile: React.FC<Props> = ({ navigate, member, language, isDarkMode, 
       addSkill: 'إضافة مهارة',
       themeTitle: 'بروتوكول السمة',
       themeDesc: 'اختر بين الوضع الفاتح أو المظلم الهادئ.'
+   } : language === 'fr' ? {
+      edit: 'Paramètres',
+      logout: 'Déconnexion',
+      logoutConfirm: 'Terminer la session ?',
+      logoutDesc: 'Cela mettra fin à votre session en toute sécurité et verrouillera vos données de coffre-fort.',
+      cancel: 'Annuler',
+      following: 'Abonnements',
+      followers: 'Abonnés',
+      likes: 'J\'aimes',
+      inspiring: '❤️ Vraiment inspirant',
+      bio: 'Philosophie & Bio',
+      edu: 'Éducation',
+      contact: 'Contact',
+      skills: 'Compétences & Focus',
+      securityTitle: 'Centre d\'intégrité du profil',
+      securityDesc: 'Gérez la biométrie, la 2FA et les paramètres de visibilité des données cliniques.',
+      securityStatus: 'Sécurité : Niveau 4 actif',
+      manageSec: 'Gérer les options de sécurité',
+      tabJourney: 'Parcours',
+      tabBoard: 'Tableau',
+      tabVault: 'Coffre-fort',
+      tabSettings: 'Paramètres',
+      identityTitle: 'Identité globale du compte',
+      identitySub: 'lié lors de l\'inscription',
+      passTitle: 'Urkio Journey Pass',
+      passDesc: 'Cet identifiant sécurisé relie vos contributions, avis d\'experts et engagements.',
+      qr: 'QR d\'identité',
+      download: 'Télécharger le Pass',
+      protocol: 'Protocole actif • Sécurisé par Clinical Bridge™',
+      endorsed: 'Membre Endossé',
+      hallOfFame: 'Temple de la Renommée',
+      topSupporter: 'Meilleur Supporter',
+      saveChanges: 'Enregistrer',
+      personalInfo: 'Informations personnelles',
+      addSkill: 'Ajouter',
+      themeTitle: 'Protocole de thème',
+      themeDesc: 'Basculez entre le mode clair et le mode sombre serein.'
    } : {
       edit: 'Settings',
       logout: 'Logout',
@@ -407,7 +444,7 @@ const UserProfile: React.FC<Props> = ({ navigate, member, language, isDarkMode, 
                                  <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">{t.bio}</h3>
                               </div>
                               <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                                 {formData.bio || (language === 'ar' ? "أبحث عن التوازن وأستكشف أعماق العافية الشمولية." : "Finding my rhythm and exploring the depths of holistic wellness.")}
+                                 {formData.bio || (language === 'ar' ? "أبحث عن التوازن وأستكشف أعماق العافية الشمولية." : language === 'fr' ? "Trouver mon rythme et explorer les profondeurs du bien-être holistique." : "Finding my rhythm and exploring the depths of holistic wellness.")}
                               </p>
                            </div>
                            <div className="grid grid-cols-2 gap-10 border-t border-black/5 dark:border-white/10 pt-10">

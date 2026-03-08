@@ -9,8 +9,8 @@ import { Avatar } from '../components/Avatar';
 
 interface Props {
   navigate: (screen: AppScreen, expert?: Expert, query?: string, resource?: Resource, circle?: Circle, stories?: Story[], storyIndex?: number, member?: Member) => void;
-  language: 'en' | 'ar';
-  setLanguage: (lang: 'en' | 'ar') => void;
+  language: 'en' | 'ar' | 'fr';
+  setLanguage: (lang: 'en' | 'ar' | 'fr') => void;
 }
 
 const MOCK_POSTS: Post[] = [
@@ -102,6 +102,14 @@ const CommunityFeed: React.FC<Props> = ({ navigate, language, setLanguage }) => 
     support: 'دعم',
     send: 'إرسال',
     share: 'مشاركة'
+  } : language === 'fr' ? {
+    header: 'Communauté',
+    placeholder: 'Commencer une nouvelle idée...',
+    categories: ['Tous', 'Psychologie', 'Nutrition', 'Sommeil', 'Bien-être'],
+    categoryKeys: ['All', 'Psychology', 'Nutrition', 'Sleep', 'Wellness'],
+    support: 'Soutien',
+    send: 'Envoyer',
+    share: 'Partager'
   } : {
     header: 'Community',
     placeholder: 'Start a new insight...',
@@ -156,8 +164,8 @@ const CommunityFeed: React.FC<Props> = ({ navigate, language, setLanguage }) => 
         <div className="flex items-center px-4 pt-6 pb-2 justify-between">
           <h1 className="text-2xl font-black bg-gradient-to-r from-urkio-magenta to-urkio-blue bg-clip-text text-transparent font-display tracking-tight leading-none">{t.header}</h1>
           <div className="flex items-center gap-3">
-            <button onClick={() => setLanguage(language === 'en' ? 'ar' : 'en')} className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500">
-              {language === 'en' ? 'AR' : 'EN'}
+            <button onClick={() => setLanguage(language === 'en' ? 'ar' : language === 'ar' ? 'fr' : 'en')} className="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              {language === 'en' ? 'AR' : language === 'ar' ? 'FR' : 'EN'}
             </button>
             <button onClick={() => navigate(AppScreen.SEARCH_RESULTS)} className="size-11 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center"><span className="material-symbols-outlined text-slate-500">search</span></button>
           </div>
