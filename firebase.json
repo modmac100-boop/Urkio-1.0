@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "dist",
+    "public": "Urkio-Mobile/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
