@@ -1,10 +1,14 @@
 
 import React, { useState } from 'react';
 import { AppScreen } from '../types';
+import { db, auth } from '../services/firebase';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 interface Props {
   navigate: (screen: AppScreen) => void;
   language: 'en' | 'ar' | 'fr';
+  expertDraft: any;
+  setExpertDraft: (draft: any) => void;
 }
 
 const CLINICAL_FOCUS = [
@@ -29,10 +33,9 @@ const MANAGER_FOCUS = [
   { id: 'm8', name: 'Outpatient Sync', icon: 'cloud_sync' }
 ];
 
-const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
-  // In a real app, this would be passed from Step 1 or a context
-  const isCaseManager = true;
+const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language, expertDraft, setExpertDraft }) => {
+  const [selected, setSelected] = useState<Set<string>>(new Set(expertDraft.focusAreas || []));
+  const isCaseManager = expertDraft.roleType === 'Case Manager';
 
   const toggle = (id: string) => {
     setSelected(prev => {
@@ -91,8 +94,8 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
                 key={area.id}
                 onClick={() => toggle(area.id)}
                 className={`flex flex-col items-center gap-4 p-6 rounded-[2.5rem] border-2 transition-all active:scale-[0.98] ${isSelected
-                    ? 'border-primary bg-primary/10 text-primary shadow-2xl shadow-primary/20 scale-[1.05]'
-                    : 'border-white/5 bg-white/5 text-slate-500'
+                  ? 'border-primary bg-primary/10 text-primary shadow-2xl shadow-primary/20 scale-[1.05]'
+                  : 'border-white/5 bg-white/5 text-slate-500'
                   }`}
               >
                 <div className={`size-14 rounded-2xl flex items-center justify-center transition-colors ${isSelected ? 'bg-primary text-white shadow-xl' : 'bg-white/5'}`}>
@@ -107,7 +110,28 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language }) => {
         <footer className="mt-12">
           <button
             disabled={selected.size === 0}
-            onClick={() => navigate(AppScreen.EXPERT_REVIEW_STATUS)}
+            onClick={async () => {
+              const finalAreas = Array.from(selected);
+              const updatedDraft = { ...expertDraft, focusAreas: finalAreas };
+              setExpertDraft(updatedDraft);
+
+              try {
+                // If user is logged in, tie application to their UID
+                const userId = auth.currentUser?.uid || `pending_${Date.now()}`;
+                await setDoc(doc(db, 'expert_applications', userId), {
+                  ...updatedDraft,
+                  userId: auth.currentUser?.uid || null,
+                  status: 'PENDING',
+                  submittedAt: serverTimestamp(),
+                });
+                console.log("Expert application submitted successfully!");
+                navigate(AppScreen.EXPERT_REVIEW_STATUS);
+              } catch (error) {
+                console.error("Error submitting expert application:", error);
+                // Still move forward for demo purposes if desired, or show error
+                navigate(AppScreen.EXPERT_REVIEW_STATUS);
+              }
+            }}
             className="w-full h-16 urkio-gradient rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-2xl shadow-primary/30 flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-30 disabled:grayscale"
           >
             {t.complete}

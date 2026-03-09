@@ -79,6 +79,7 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
    const [activeTab, setActiveTab] = useState<'Journey' | 'Board' | 'Vault' | 'Settings'>('Journey');
    const [showLikeCelebration, setShowLikeCelebration] = useState(false);
    const [showLogoutModal, setShowLogoutModal] = useState(false);
+   const [showToast, setShowToast] = useState(false);
    const scrollContainerRef = useRef<HTMLDivElement>(null);
 
    const [reflections, setReflections] = useState<any[]>([]);
@@ -296,6 +297,8 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
             occupation: formData.occupation
          });
 
+         setShowToast(true);
+         setTimeout(() => setShowToast(false), 3000);
          setActiveTab('Journey');
          window.scrollTo(0, 0);
       } catch (err) {
@@ -318,7 +321,7 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
 
                <div className="absolute top-8 left-6 right-6 flex items-center justify-between z-10">
                   <button
-                     onClick={goBack}
+                     onClick={() => navigate(AppScreen.USER_DASHBOARD)}
                      className="size-11 flex items-center justify-center rounded-2xl crystal-glass border border-white/20 text-slate-900 dark:text-white active:scale-90 transition-all shadow-lg"
                   >
                      <span className={`material-symbols-outlined ${language === 'ar' ? 'rotate-180' : ''}`}>arrow_back_ios_new</span>
@@ -686,6 +689,16 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                         </button>
                      </div>
                   </div>
+               </div>
+            </div>
+         )}
+
+         {/* Success Toast */}
+         {showToast && (
+            <div className="fixed bottom-32 left-1/2 -translate-x-1/2 z-[1100] animate-in slide-in-from-bottom-4 duration-500">
+               <div className="bg-emerald-500 text-white px-8 py-4 rounded-3xl shadow-2xl shadow-emerald-500/30 flex items-center gap-3 border border-white/20 backdrop-blur-md">
+                  <span className="material-symbols-outlined text-2xl">check_circle</span>
+                  <p className="text-[10px] font-black uppercase tracking-widest">Protocol Updated Successfully</p>
                </div>
             </div>
          )}

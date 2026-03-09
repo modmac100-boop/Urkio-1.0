@@ -5,6 +5,7 @@ import { Avatar } from '../components/Avatar';
 
 interface Props {
   navigate: (screen: AppScreen, expert?: Expert) => void;
+  handleLogout: () => void;
   expert: Expert | null;
   language: 'en' | 'ar' | 'fr';
   isOwnProfile?: boolean;
@@ -44,7 +45,7 @@ const EXPERT_POSTS: Post[] = [
   }
 ];
 
-const ExpertPublicProfile: React.FC<Props> = ({ navigate, expert, language, isOwnProfile = false }) => {
+const ExpertPublicProfile: React.FC<Props> = ({ navigate, handleLogout, expert, language, isOwnProfile = false }) => {
   const [activeTab, setActiveTab] = useState<'About' | 'Services' | 'Insights'>('About');
   const [isFollowing, setIsFollowing] = useState(false);
 
@@ -154,15 +155,23 @@ const ExpertPublicProfile: React.FC<Props> = ({ navigate, expert, language, isOw
               </svg>
             </div>
             {isOwnProfile ? (
-              <button
-                onClick={() => navigate(AppScreen.EXPERT_PROFILE)}
-                className={`h-11 px-6 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-xl ${themeBgPrimary} text-white ${themeShadow}`}
-              >
-                <div className="flex items-center gap-2">
-                  <span className="material-symbols-outlined text-sm">edit</span>
-                  {t.editProfile}
-                </div>
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate(AppScreen.EXPERT_PROFILE)}
+                  className={`h-11 px-6 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-xl ${themeBgPrimary} text-white ${themeShadow}`}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-sm">edit</span>
+                    {t.editProfile}
+                  </div>
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="size-11 flex items-center justify-center rounded-2xl bg-white/20 backdrop-blur-xl border border-white/20 text-red-500 active:scale-95 transition-all shadow-lg"
+                >
+                  <span className="material-symbols-outlined">logout</span>
+                </button>
+              </div>
             ) : (
               <button
                 onClick={() => setIsFollowing(!isFollowing)}

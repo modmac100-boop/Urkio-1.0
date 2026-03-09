@@ -8,7 +8,7 @@
     "start": "node server.js",
     "mobile": "npm start --prefix Urkio-Mobile",
     "postinstall": "npm install --prefix Urkio-Mobile",
-    "build": "npm run build --prefix Urkio-Mobile && rm -rf dist && cp -r Urkio-Mobile/dist dist",
+    "build": "vite build",
     "lint": "tsc --noEmit",
     "preview": "vite preview"
   },

@@ -42,6 +42,7 @@ const AI_FLAGGED_CASES: Case[] = [
 
 interface Props {
    navigate: (s: AppScreen) => void;
+   handleLogout: () => void;
    expertTitle?: string;
    language: 'en' | 'ar' | 'fr';
    setLanguage: (lang: 'en' | 'ar' | 'fr') => void;
@@ -49,9 +50,10 @@ interface Props {
    toggleDarkMode: () => void;
 }
 
-const ExpertDashboard: React.FC<Props> = ({ navigate, expertTitle = "Functional Dietitian", language, setLanguage, isDarkMode, toggleDarkMode }) => {
+const ExpertDashboard: React.FC<Props> = ({ navigate, handleLogout, expertTitle = "Functional Dietitian", language, setLanguage, isDarkMode, toggleDarkMode }) => {
    const isDietitian = expertTitle.toLowerCase().includes('dietitian') || expertTitle.toLowerCase().includes('nutrition');
    const [profileComplete, setProfileComplete] = useState(false);
+   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
    const themeGradient = isDietitian ? 'diet-gradient' : 'urkio-gradient';
    const themePrimaryColor = isDietitian ? 'text-urkio-green' : 'text-primary';
@@ -65,6 +67,12 @@ const ExpertDashboard: React.FC<Props> = ({ navigate, expertTitle = "Functional 
          <header className="sticky top-0 z-50 bg-background-dark/80 backdrop-blur-xl p-6 border-b border-white/5">
             <div className="flex items-center justify-between mb-6">
                <div className="flex items-center gap-3">
+                  <button
+                     onClick={() => navigate(AppScreen.SECURE_PORTAL)}
+                     className="size-10 rounded-xl bg-white/5 flex items-center justify-center text-slate-400 hover:text-white transition-all active:scale-95"
+                  >
+                     <span className="material-symbols-outlined text-2xl">arrow_back</span>
+                  </button>
                   <div className={`size-10 rounded-xl bg-white/5 flex items-center justify-center ${themePrimaryColor} border ${themeBorderColor}`}>
                      <span className="material-symbols-outlined text-2xl">{themeIcon}</span>
                   </div>
@@ -93,6 +101,12 @@ const ExpertDashboard: React.FC<Props> = ({ navigate, expertTitle = "Functional 
                      className={`size-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 ${isDietitian ? 'text-urkio-green' : 'text-emerald-400'}`}
                   >
                      <span className="material-symbols-outlined">payments</span>
+                  </button>
+                  <button
+                     onClick={() => setShowLogoutModal(true)}
+                     className="size-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 text-red-400 hover:bg-red-500/10 transition-all active:scale-95"
+                  >
+                     <span className="material-symbols-outlined">logout</span>
                   </button>
                </div>
             </div>
@@ -193,6 +207,38 @@ const ExpertDashboard: React.FC<Props> = ({ navigate, expertTitle = "Functional 
          </main>
 
          <BottomNav role="EXPERT" currentScreen={AppScreen.EXPERT_DASHBOARD} navigate={navigate} language={language} />
+
+         {/* Logout Confirmation Modal */}
+         {showLogoutModal && (
+            <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
+               <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setShowLogoutModal(false)}></div>
+               <div className="relative w-full bg-[#111122] border border-white/10 rounded-[2.5rem] p-8 shadow-2xl space-y-8 animate-in zoom-in-95 duration-300">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                     <div className="size-20 rounded-3xl bg-red-500/10 flex items-center justify-center text-red-500">
+                        <span className="material-symbols-outlined text-4xl">logout</span>
+                     </div>
+                     <h3 className="text-xl font-black">Clinical Exit</h3>
+                     <p className="text-xs text-slate-400 leading-relaxed px-4">
+                        Are you sure you want to terminate your current session? You will need to re-verify your identity to access clinical data.
+                     </p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                     <button
+                        onClick={handleLogout}
+                        className="w-full h-14 bg-red-500 text-white rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-xl shadow-red-500/20 active:scale-95 transition-all"
+                     >
+                        Confirm Terminate Session
+                     </button>
+                     <button
+                        onClick={() => setShowLogoutModal(false)}
+                        className="w-full h-14 bg-white/5 text-slate-400 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:text-white transition-all"
+                     >
+                        Stay Logged In
+                     </button>
+                  </div>
+               </div>
+            </div>
+         )}
       </div>
    );
 };

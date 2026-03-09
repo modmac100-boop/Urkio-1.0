@@ -121,6 +121,17 @@ const App: React.FC = () => {
   const [initialStoryIndex, setInitialStoryIndex] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Expert Application Persistence
+  const [expertDraft, setExpertDraft] = useState<any>({
+    roleType: '',
+    title: '',
+    experience: '',
+    bio: '',
+    documents: { license: null, cv: null },
+    letter: '',
+    focusAreas: []
+  });
+
   // Function to fetch role from Firebase 'profiles' collection
   const fetchUserProfile = async (userId: string) => {
     try {
@@ -198,7 +209,7 @@ const App: React.FC = () => {
     if (stories) setActiveStories(stories);
     if (storyIndex !== undefined) setInitialStoryIndex(storyIndex);
     if (query !== undefined) setSearchQuery(query);
-    
+
     setScreenHistory(prev => [...prev, currentScreen]);
     setCurrentScreen(screen);
     window.scrollTo(0, 0);
@@ -238,7 +249,9 @@ const App: React.FC = () => {
       setLanguage,
       isDarkMode,
       toggleDarkMode,
-      userRole
+      userRole,
+      expertDraft,
+      setExpertDraft
     };
 
     // If user is logged in and at starting login/landing screens, push to dashboard
@@ -290,10 +303,15 @@ const App: React.FC = () => {
           {...commonProps}
           userRole={userRole}
           onAuthSuccess={(roleOverride) => {
-            if (roleOverride) {
-              setUserRole(roleOverride);
-              if (roleOverride === 'BOARD' || roleOverride === 'MANAGEMENT' || roleOverride === 'FOUNDER') {
+            const finalRole = roleOverride || userRole;
+            if (finalRole) {
+              setUserRole(finalRole);
+              if (finalRole === 'BOARD' || finalRole === 'MANAGEMENT' || finalRole === 'FOUNDER') {
                 navigate(AppScreen.MANAGEMENT_DASHBOARD);
+                return;
+              }
+              if (finalRole === 'EXPERT') {
+                navigate(AppScreen.EXPERT_SIGNUP_INFO);
                 return;
               }
             }
@@ -365,13 +383,13 @@ const App: React.FC = () => {
         return <ExpertOnboarding {...commonProps} />;
 
       case AppScreen.EXPERT_SIGNUP_INFO:
-        return <ExpertSignup_Info {...commonProps} language={language} />;
+        return <ExpertSignup_Info {...commonProps} />;
 
       case AppScreen.EXPERT_SIGNUP_VERIFICATION:
         return <ExpertSignup_Verification {...commonProps} />;
 
       case AppScreen.EXPERT_SIGNUP_FOCUS:
-        return <ExpertSignup_Focus {...commonProps} language={language} />;
+        return <ExpertSignup_Focus {...commonProps} />;
 
       case AppScreen.EXPERT_REVIEW_STATUS:
         return <ExpertReviewStatus {...commonProps} />;

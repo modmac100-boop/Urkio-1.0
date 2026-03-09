@@ -42,6 +42,12 @@ const ManagementDashboard: React.FC<Props> = ({ navigate, role, handleLogout }) 
       <div className="relative min-h-screen w-full flex flex-col bg-[#050b1a] text-white max-w-md mx-auto shadow-2xl font-sans overflow-x-hidden">
          <header className="sticky top-0 z-50 bg-[#050b1a]/90 backdrop-blur-xl p-6 border-b border-white/5 flex items-center justify-between">
             <div className="flex items-center gap-4">
+               <button
+                  onClick={() => navigate(AppScreen.SECURE_PORTAL)}
+                  className="size-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 active:scale-90 transition-all mr-2"
+               >
+                  <span className="material-symbols-outlined text-slate-400">arrow_back</span>
+               </button>
                <div className={`size-10 rounded-xl flex items-center justify-center border ${isBoard ? 'bg-amber-500/20 text-amber-500 border-amber-500/20' : 'bg-primary/20 text-primary border border-primary/20'
                   }`}>
                   <span className="material-symbols-outlined text-2xl">{isBoard ? 'stars' : 'admin_panel_settings'}</span>

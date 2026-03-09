@@ -5,13 +5,15 @@ import { AppScreen } from '../types';
 interface Props {
   navigate: (screen: AppScreen) => void;
   language: 'en' | 'ar' | 'fr';
+  expertDraft: any;
+  setExpertDraft: (draft: any) => void;
 }
 
-const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
-  const [roleType, setRoleType] = useState<'CLINICAL' | 'CASE_MANAGER' | 'DIETITIAN'>('CLINICAL');
-  const [title, setTitle] = useState('');
-  const [experience, setExperience] = useState('');
-  const [bio, setBio] = useState('');
+const ExpertSignup_Info: React.FC<Props> = ({ navigate, language, expertDraft, setExpertDraft }) => {
+  const [roleType, setRoleType] = useState<'CLINICAL' | 'CASE_MANAGER' | 'DIETITIAN'>(expertDraft.roleType || 'CLINICAL');
+  const [title, setTitle] = useState(expertDraft.title || '');
+  const [experience, setExperience] = useState(expertDraft.experience || '');
+  const [bio, setBio] = useState(expertDraft.bio || '');
 
   const t = language === 'ar' ? {
     header: 'المعلومات المهنية',
@@ -173,7 +175,10 @@ const ExpertSignup_Info: React.FC<Props> = ({ navigate, language }) => {
         <footer className="mt-12">
           <button
             disabled={!title || !experience}
-            onClick={() => navigate(AppScreen.EXPERT_SIGNUP_VERIFICATION)}
+            onClick={() => {
+              setExpertDraft({ ...expertDraft, roleType, title, experience, bio });
+              navigate(AppScreen.EXPERT_SIGNUP_VERIFICATION);
+            }}
             className={`w-full h-16 rounded-2xl text-white font-black text-sm uppercase tracking-widest shadow-2xl flex items-center justify-center gap-3 active:scale-[0.98] transition-all disabled:opacity-30 disabled:grayscale ${isDietMode ? 'bg-urkio-green shadow-urkio-green/20' : 'urkio-gradient shadow-primary/30'
               }`}
           >
