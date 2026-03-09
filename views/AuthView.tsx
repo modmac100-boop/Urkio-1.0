@@ -3,12 +3,13 @@ import React, { useState, useMemo } from 'react';
 import { AppScreen, UserRole } from '../types';
 import { auth, db } from '../services/firebase';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 interface Props {
   navigate: (screen: AppScreen) => void;
-  onAuthSuccess: (roleOverride?: UserRole) => void;
+  onAuthSuccess: (roleOverride?: UserRole, isNewRegistration?: boolean) => void;
   userRole: UserRole;
+  initialMode?: 'login' | 'signup';
 }
 
 const UrkioLogo = ({ className = "size-20", color = "url(#logoGradAuth)" }: { className?: string, color?: string }) => (
@@ -46,8 +47,8 @@ const UrkioLogo = ({ className = "size-20", color = "url(#logoGradAuth)" }: { cl
   </svg>
 );
 
-const AuthView: React.FC<Props> = ({ navigate, onAuthSuccess, userRole }) => {
-  const [isLogin, setIsLogin] = useState(true);
+const AuthView: React.FC<Props> = ({ navigate, onAuthSuccess, userRole, initialMode }) => {
+  const [isLogin, setIsLogin] = useState(initialMode !== 'signup');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showRegSuccess, setShowRegSuccess] = useState(false);
@@ -95,9 +96,16 @@ const AuthView: React.FC<Props> = ({ navigate, onAuthSuccess, userRole }) => {
     try {
       if (isLogin) {
         // Firebase Login
-        await signInWithEmailAndPassword(auth, regData.email, regData.password);
-
-        onAuthSuccess();
+        const credential = await signInWithEmailAndPassword(auth, regData.email, regData.password);
+        // Read role from Firestore to route user/expert correctly
+        let detectedRole: UserRole | undefined;
+        try {
+          const profileSnap = await getDoc(doc(db, 'profiles', credential.user.uid));
+          if (profileSnap.exists()) {
+            detectedRole = profileSnap.data().role as UserRole;
+          }
+        } catch (_) { }
+        onAuthSuccess(detectedRole, false);
       } else {
         // Firebase Registration
         const userCredential = await createUserWithEmailAndPassword(auth, regData.email, regData.password);
@@ -132,7 +140,7 @@ const AuthView: React.FC<Props> = ({ navigate, onAuthSuccess, userRole }) => {
 
           // Instead of switching to login mode, proceed directly to Onboarding
           // Explicitly pass the userRole to avoid race conditions with Firestore sync
-          onAuthSuccess(userRole);
+          onAuthSuccess(userRole, true);
         }
       }
     } catch (err: any) {

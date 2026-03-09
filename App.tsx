@@ -302,7 +302,8 @@ const App: React.FC = () => {
         return <AuthView
           {...commonProps}
           userRole={userRole}
-          onAuthSuccess={(roleOverride) => {
+          initialMode={userRole === 'EXPERT' ? 'signup' : 'login'}
+          onAuthSuccess={(roleOverride, isNewRegistration) => {
             const finalRole = roleOverride || userRole;
             if (finalRole) {
               setUserRole(finalRole);
@@ -311,11 +312,22 @@ const App: React.FC = () => {
                 return;
               }
               if (finalRole === 'EXPERT') {
-                navigate(AppScreen.EXPERT_SIGNUP_INFO);
+                // New registration: go through professional signup info screens
+                // Existing expert login: go straight to dashboard
+                if (isNewRegistration) {
+                  navigate(AppScreen.EXPERT_SIGNUP_INFO);
+                } else {
+                  navigate(AppScreen.EXPERT_DASHBOARD);
+                }
                 return;
               }
             }
-            navigate(AppScreen.ONBOARDING_INTRO);
+            // Regular user: new registration → onboarding, existing login → dashboard
+            if (isNewRegistration) {
+              navigate(AppScreen.ONBOARDING_INTRO);
+            } else {
+              navigate(AppScreen.USER_DASHBOARD);
+            }
           }}
         />;
 
