@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { DarkTheme, DefaultTheme } from '@react-navigation/native';
+import './global.css';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();

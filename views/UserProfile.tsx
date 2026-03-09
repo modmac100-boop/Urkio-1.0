@@ -292,7 +292,6 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
          const firstName = nameParts[0] || '';
          const familyName = nameParts.slice(1).join(' ') || '';
 
-         // setDoc with merge = true acts as upsert (creates if not exists, updates if exists)
          await setDoc(doc(db, 'profiles', user.uid), {
             first_name: firstName,
             family_name: familyName,
@@ -306,7 +305,6 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
             occupation: formData.occupation,
             specialties: formData.specialties,
             credentials: formData.credentials,
-            // Only update verificationStatus if submitting credentials for first time
             ...(formData.verificationStatus === 'unverified' && formData.credentials
                ? { verificationStatus: 'pending' }
                : {}),
@@ -316,8 +314,7 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
          setIsEditMode(false);
          setShowToast(true);
          setTimeout(() => setShowToast(false), 3000);
-         setActiveTab('Journey');
-         window.scrollTo(0, 0);
+         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (err: any) {
          console.error('Error saving profile:', err);
          setSaveError(err?.message || 'Failed to save. Please try again.');
@@ -344,51 +341,62 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
          <div ref={scrollContainerRef} className="flex-1 overflow-y-auto no-scrollbar pb-32">
             {/* Profile Backdrop & Header */}
             <header className="relative min-h-[520px] overflow-hidden shrink-0">
-               <div className="absolute inset-0 gold-gradient opacity-20 blur-3xl -translate-y-1/2 scale-150"></div>
-               <img src={currentUser.coverImage || "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80"} className="absolute inset-0 size-full object-cover opacity-60" alt="Cover" />
-               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-slate-50 dark:to-background-dark"></div>
+               <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                  <div className="absolute -top-24 -left-20 size-96 bg-primary/20 blur-[100px] animate-aurora rounded-full"></div>
+                  <div className="absolute top-1/2 -right-20 size-80 bg-urkio-magenta/15 blur-[100px] animate-aurora rounded-full" style={{ animationDelay: '-5s' }}></div>
+                  <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 size-64 bg-emerald-500/10 blur-[80px] animate-aurora rounded-full" style={{ animationDelay: '-10s' }}></div>
+               </div>
+
+               <img src={currentUser.coverImage || "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80"} className="absolute inset-0 size-full object-cover opacity-40 grayscale-[0.5]" alt="Cover" />
+               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-slate-50 dark:to-background-dark"></div>
 
                <div className="absolute top-8 left-6 right-6 flex items-center justify-between z-10">
                   <button
                      onClick={() => navigate(AppScreen.USER_DASHBOARD)}
-                     className="size-11 flex items-center justify-center rounded-2xl crystal-glass border border-white/20 text-slate-900 dark:text-white active:scale-90 transition-all shadow-lg"
+                     className="size-11 flex items-center justify-center rounded-2xl crystal-glass border border-white/20 text-slate-900 dark:text-white active:scale-90 transition-all shadow-lg hover:bg-white/40 dark:hover:bg-white/10"
                   >
                      <span className={`material-symbols-outlined ${language === 'ar' ? 'rotate-180' : ''}`}>arrow_back_ios_new</span>
                   </button>
                   <div className="flex gap-2">
                      {isOwnProfile && (
-                        <>
-                           <button
-                              onClick={() => setActiveTab('Settings')}
-                              className={`h-11 px-5 rounded-2xl border border-white/20 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest active:scale-90 transition-all shadow-lg ${activeTab === 'Settings' ? 'bg-primary text-white' : 'crystal-glass dark:bg-black/40 text-slate-900 dark:text-white'}`}
-                           >
-                              <span className="material-symbols-outlined text-sm">settings</span>
-                              {t.edit}
-                           </button>
-                           <button
-                              onClick={() => setShowLogoutModal(true)}
-                              className="size-11 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center active:scale-90 transition-all shadow-lg"
-                           >
-                              <span className="material-symbols-outlined">power_settings_new</span>
-                           </button>
-                        </>
+                        <button
+                           onClick={() => setShowLogoutModal(true)}
+                           className="size-11 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-500 flex items-center justify-center active:scale-90 transition-all shadow-lg hover:bg-red-500/20"
+                        >
+                           <span className="material-symbols-outlined">power_settings_new</span>
+                        </button>
                      )}
                   </div>
                </div>
 
-               <div className="absolute bottom-4 left-0 right-0 px-8 pb-4 flex flex-col items-center">
-                  <Avatar
-                     src={currentUser.image}
-                     size="xl"
-                     isHallOfFame={currentUser.isHallOfFame}
-                     isTopSupporter={currentUser.isTopSupporter}
-                     isEndorsed={currentUser.isEndorsed}
-                     className="mb-8"
-                  />
+               <div className="absolute bottom-0 left-0 right-0 px-8 pb-10 flex flex-col items-center">
+                  <div className="relative group mb-8">
+                     <Avatar
+                        src={currentUser.image}
+                        size="xl"
+                        isHallOfFame={currentUser.isHallOfFame}
+                        isTopSupporter={currentUser.isTopSupporter}
+                        isEndorsed={currentUser.isEndorsed}
+                     />
+                     {isOwnProfile && isEditMode && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full cursor-pointer group-hover:opacity-100 opacity-0 transition-opacity">
+                           <span className="material-symbols-outlined text-white">photo_camera</span>
+                        </div>
+                     )}
+                  </div>
 
-                  <div className="flex flex-col items-center gap-3 mb-8 text-center">
+                  <div className="flex flex-col items-center gap-3 mb-10 text-center">
                      <div className="flex items-center gap-4">
-                        <h2 className="text-4xl font-black font-display tracking-tight text-slate-900 dark:text-white">{currentUser.name}</h2>
+                        {isEditMode ? (
+                           <input
+                              value={formData.name}
+                              onChange={e => setFormData({ ...formData, name: e.target.value })}
+                              className="text-4xl font-black font-display tracking-tight text-center bg-white/10 border-b-2 border-primary/50 text-slate-900 dark:text-white outline-none w-full max-w-[280px]"
+                              placeholder="Your Name"
+                           />
+                        ) : (
+                           <h2 className="text-4xl font-black font-display tracking-tight text-slate-900 dark:text-white">{formData.name || currentUser.name}</h2>
+                        )}
                         <div className="flex gap-2">
                            {currentUser.isTopSupporter && (
                               <div className="size-10 urkio-gradient rounded-2xl flex items-center justify-center shadow-lg border border-white/20" title={t.topSupporter}>
@@ -404,10 +412,19 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                      </div>
 
                      <div className="flex items-center gap-2">
-                        {currentUser.isEndorsed && (
-                           <div className="px-5 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black text-primary uppercase tracking-widest shadow-sm">
-                              {t.endorsed}
-                           </div>
+                        {isEditMode ? (
+                           <input
+                              value={formData.occupation}
+                              onChange={e => setFormData({ ...formData, occupation: e.target.value })}
+                              className="text-[10px] font-black uppercase tracking-[0.3em] text-center bg-primary/10 border-b border-primary/30 text-primary outline-none px-4 py-1.5 rounded-full"
+                              placeholder="Your Occupation"
+                           />
+                        ) : (
+                           (formData.occupation || currentUser.isEndorsed) && (
+                              <div className="px-5 py-1.5 bg-primary/10 border border-primary/20 rounded-full text-[10px] font-black text-primary uppercase tracking-widest shadow-sm">
+                                 {formData.occupation || t.endorsed}
+                              </div>
+                           )
                         )}
                      </div>
                   </div>
@@ -488,15 +505,52 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                            )}
                         </div>
 
-                        <section className="crystal-glass p-10 rounded-6xl border border-white/20 shadow-2xl space-y-10">
-                           <div className="space-y-5">
-                              <div className="flex items-center gap-4">
-                                 <span className="material-symbols-outlined text-primary text-2xl">psychology</span>
-                                 <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">{t.bio}</h3>
+                        <section className="crystal-glass p-10 rounded-6xl border border-white/20 shadow-2xl space-y-10 group/card">
+                           {/* Visual Progress Stats */}
+                           <div className="grid grid-cols-2 gap-8 mb-4">
+                              <div className="space-y-4">
+                                 <div className="flex justify-between items-center px-2">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Self-Discovery</span>
+                                    <span className="text-[10px] font-black text-primary">82%</span>
+                                 </div>
+                                 <div className="h-2.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden border border-black/5 dark:border-white/10">
+                                    <div className="h-full w-[82%] bg-gradient-to-r from-primary to-urkio-magenta rounded-full animate-in slide-in-from-left duration-1000"></div>
+                                 </div>
                               </div>
-                              <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
-                                 {formData.bio || (language === 'ar' ? "أبحث عن التوازن وأستكشف أعماق العافية الشمولية." : language === 'fr' ? "Trouver mon rythme et explorer les profondeurs du bien-être holistique." : "Finding my rhythm and exploring the depths of holistic wellness.")}
-                              </p>
+                              <div className="space-y-4">
+                                 <div className="flex justify-between items-center px-2">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">Community Impact</span>
+                                    <span className="text-[10px] font-black text-emerald-500">65%</span>
+                                 </div>
+                                 <div className="h-2.5 w-full bg-slate-100 dark:bg-white/5 rounded-full overflow-hidden border border-black/5 dark:border-white/10">
+                                    <div className="h-full w-[65%] bg-gradient-to-r from-emerald-400 to-primary rounded-full animate-in slide-in-from-left duration-1000 delay-300"></div>
+                                 </div>
+                              </div>
+                           </div>
+
+                           <div className="space-y-5">
+                              <div className="flex items-center justify-between">
+                                 <div className="flex items-center gap-4">
+                                    <span className="material-symbols-outlined text-primary text-2xl">psychology</span>
+                                    <h3 className="text-xs font-black uppercase tracking-[0.3em] text-slate-500 dark:text-slate-400">{t.bio}</h3>
+                                 </div>
+                                 {isOwnProfile && isEditMode && (
+                                    <span className="text-[9px] font-black text-primary/60 uppercase tracking-widest animate-pulse">Editing Click-to-Save...</span>
+                                 )}
+                              </div>
+                              {isEditMode ? (
+                                 <textarea
+                                    value={formData.bio}
+                                    onChange={e => setFormData({ ...formData, bio: e.target.value })}
+                                    rows={3}
+                                    className="w-full px-8 py-5 bg-slate-100 dark:bg-white/5 border border-primary/30 rounded-4xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-medium dark:text-white resize-none"
+                                    placeholder="Your philosophy and personal mission..."
+                                 />
+                              ) : (
+                                 <p className="text-base text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                                    {formData.bio || (language === 'ar' ? "أبحث عن التوازن وأستكشف أعماق العافية الشمولية." : language === 'fr' ? "Trouver mon rythme et explorer les profondeurs du bien-être holistique." : "Finding my rhythm and exploring the depths of holistic wellness.")}
+                                 </p>
+                              )}
                            </div>
                            <div className="grid grid-cols-2 gap-10 border-t border-black/5 dark:border-white/10 pt-10">
                               <div className="space-y-3">
@@ -504,28 +558,56 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                     <span className="material-symbols-outlined text-primary text-lg">school</span>
                                     <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t.edu}</h4>
                                  </div>
-                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formData.studyLevel || "Not Specified"}</p>
+                                 {isEditMode ? (
+                                    <select
+                                       value={formData.studyLevel}
+                                       onChange={e => setFormData({ ...formData, studyLevel: e.target.value })}
+                                       className="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl text-sm font-black dark:text-white appearance-none py-2 px-4"
+                                    >
+                                       {STUDY_LEVELS.map(s => <option key={s} value={s}>{s}</option>)}
+                                    </select>
+                                 ) : (
+                                    <p className="text-sm font-black text-slate-900 dark:text-white">{formData.studyLevel || "Not Specified"}</p>
+                                 )}
                               </div>
                               <div className="space-y-3">
                                  <div className="flex items-center gap-3">
                                     <span className="material-symbols-outlined text-primary text-lg">call</span>
                                     <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">{t.contact}</h4>
                                  </div>
-                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formData.phone || "Private"}</p>
+                                 {isEditMode ? (
+                                    <input
+                                       value={formData.phone}
+                                       onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                                       className="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl text-sm font-black dark:text-white py-2 px-4"
+                                       placeholder="+1..."
+                                    />
+                                 ) : (
+                                    <p className="text-sm font-black text-slate-900 dark:text-white">{formData.phone || "Private"}</p>
+                                 )}
                               </div>
                               <div className="space-y-3">
                                  <div className="flex items-center gap-3">
                                     <span className="material-symbols-outlined text-primary text-lg">location_on</span>
                                     <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Location</h4>
                                  </div>
-                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formData.location || "Earth"}</p>
+                                 {isEditMode ? (
+                                    <input
+                                       value={formData.location}
+                                       onChange={e => setFormData({ ...formData, location: e.target.value })}
+                                       className="w-full bg-slate-100 dark:bg-white/5 border-none rounded-2xl text-sm font-black dark:text-white py-2 px-4"
+                                       placeholder="City, Country"
+                                    />
+                                 ) : (
+                                    <p className="text-sm font-black text-slate-900 dark:text-white">{formData.location || "Earth"}</p>
+                                 )}
                               </div>
                               <div className="space-y-3">
                                  <div className="flex items-center gap-3">
                                     <span className="material-symbols-outlined text-primary text-lg">work</span>
-                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Expert Role</h4>
+                                    <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500">Focus Area</h4>
                                  </div>
-                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formData.occupation || "Member"}</p>
+                                 <p className="text-sm font-black text-slate-900 dark:text-white">{formData.specialties[0] || "Global Citizen"}</p>
                               </div>
                            </div>
                         </section>
@@ -777,10 +859,10 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                  <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">Verification Status</h3>
                               </div>
                               <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${formData.verificationStatus === 'verified'
-                                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30'
-                                    : formData.verificationStatus === 'pending'
-                                       ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
-                                       : 'bg-slate-200 dark:bg-white/10 text-slate-500 border border-slate-300 dark:border-white/10'
+                                 ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30'
+                                 : formData.verificationStatus === 'pending'
+                                    ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
+                                    : 'bg-slate-200 dark:bg-white/10 text-slate-500 border border-slate-300 dark:border-white/10'
                                  }`}>
                                  {formData.verificationStatus === 'verified' ? '✓ Verified' : formData.verificationStatus === 'pending' ? '⏳ Pending Review' : 'Not Verified'}
                               </div>
@@ -837,6 +919,34 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                </section>
             </main>
          </div>
+
+         {/* Floating Action Button (FAB) */}
+         {isOwnProfile && (
+            <div className="fixed bottom-10 right-10 z-50 animate-in slide-in-from-right-10 duration-700">
+               <button
+                  onClick={isEditMode ? handleSaveSettings : () => {
+                     setActiveTab('Settings');
+                     setIsEditMode(true);
+                     window.scrollTo({ top: 300, behavior: 'smooth' });
+                  }}
+                  className={`group relative flex items-center justify-center size-20 rounded-[2.5rem] shadow-3xl transition-all duration-500 hover:scale-110 active:scale-90 ${isEditMode ? 'bg-emerald-500 glow-emerald shadow-emerald-500/40' : 'urkio-gradient glow-primary shadow-primary/40'
+                     }`}
+               >
+                  <div className="absolute inset-0 bg-white/20 rounded-[2.5rem] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <span className="material-symbols-outlined text-white text-3xl font-bold fill-1 transition-transform group-hover:rotate-12">
+                     {isSaving ? 'sync' : (isEditMode ? 'check' : 'edit_square')}
+                  </span>
+                  {isSaving && (
+                     <div className="absolute inset-0 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  )}
+
+                  {/* Tooltip */}
+                  <div className="absolute right-full mr-6 py-3 px-5 bg-slate-900 text-white text-[10px] font-black uppercase tracking-widest rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-2xl translate-x-4 group-hover:translate-x-0 whitespace-nowrap">
+                     {isEditMode ? 'Confirm Ritual' : 'Modify Essence'}
+                  </div>
+               </button>
+            </div>
+         )}
 
          {/* Logout Confirmation Modal */}
          {showLogoutModal && (

@@ -122,6 +122,9 @@ const LandingView: React.FC<Props> = ({ onJoin, navigate, language, setLanguage 
             <p className={`text-[11px] font-black tracking-[0.6em] uppercase text-center transition-all duration-1000 no-mirror ${isLuxe ? 'text-primary' : 'text-slate-400 opacity-80'}`}>
               Your Journey Within
             </p>
+            <div className={`mt-4 px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest ${isLuxe ? 'border-white/10 text-white/40' : 'border-slate-200 text-slate-400'}`}>
+              Live Domain Connected v1.0.1
+            </div>
           </div>
         </div>
 
