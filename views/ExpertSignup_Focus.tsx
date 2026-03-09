@@ -118,12 +118,17 @@ const ExpertSignup_Focus: React.FC<Props> = ({ navigate, language, expertDraft, 
               try {
                 // If user is logged in, tie application to their UID
                 const userId = auth.currentUser?.uid || `pending_${Date.now()}`;
-                await setDoc(doc(db, 'expert_applications', userId), {
-                  ...updatedDraft,
-                  userId: auth.currentUser?.uid || null,
-                  status: 'PENDING',
+
+                // Remove File objects before saving to Firestore (they would need to go to Storage first)
+                const { documents, ...draftWithoutFiles } = updatedDraft;
+
+                await setDoc(doc(db, 'profiles', userId), {
+                  ...draftWithoutFiles,
+                  credentialUrl: 'https://example.com/placeholder-credential.pdf', // Placeholder for actual upload
+                  role: 'SPECIALIST',
+                  isVerified: false,
                   submittedAt: serverTimestamp(),
-                });
+                }, { merge: true });
                 console.log("Expert application submitted successfully!");
                 navigate(AppScreen.EXPERT_REVIEW_STATUS);
               } catch (error) {

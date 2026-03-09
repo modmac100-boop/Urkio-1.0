@@ -1,5 +1,5 @@
 
-export type UserRole = 'USER' | 'EXPERT' | 'MANAGEMENT' | 'CASE_MANAGER' | 'BOARD' | 'FOUNDER';
+export type UserRole = 'USER' | 'EXPERT' | 'MANAGEMENT' | 'CASE_MANAGER' | 'BOARD' | 'FOUNDER' | 'SPECIALIST' | 'DOCTOR';
 
 export interface Certification {
   id: string;
@@ -220,5 +220,7 @@ export enum AppScreen {
   SPECIALIST_SELECTOR,
   NOTIFICATIONS,
   BOARD_ADMIN_PANEL,
-  FOUNDER_ADMIN_PANEL
+  FOUNDER_ADMIN_PANEL,
+  SPECIALIST_DASHBOARD,
+  ADMIN_VERIFICATION_BOARD
 }

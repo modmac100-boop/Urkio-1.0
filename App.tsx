@@ -164,7 +164,10 @@ const App: React.FC = () => {
           AppScreen.SPLASH, AppScreen.LANDING, AppScreen.AUTH, AppScreen.PASSWORD_RECOVERY,
           AppScreen.EXPERT_ONBOARDING, AppScreen.EXPERT_SIGNUP_INFO,
           AppScreen.EXPERT_SIGNUP_VERIFICATION, AppScreen.EXPERT_SIGNUP_FOCUS,
-          AppScreen.EXPERT_REVIEW_STATUS, AppScreen.SECURE_PORTAL
+          AppScreen.EXPERT_REVIEW_STATUS, AppScreen.SECURE_PORTAL,
+          // Allow these screens without a session if they bypass via SecurePortal temporarily
+          // (They rely on local role state being set to BOARD/FOUNDER/MANAGEMENT)
+          AppScreen.MANAGEMENT_DASHBOARD, AppScreen.BOARD_ADMIN_PANEL, AppScreen.FOUNDER_ADMIN_PANEL
         ];
         if (!publicScreens.includes(currentScreen)) {
           setCurrentScreen(AppScreen.LANDING);
