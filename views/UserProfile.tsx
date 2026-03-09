@@ -67,13 +67,15 @@ const DEFAULT_MEMBER: Member = {
 
 interface Props {
    navigate: (s: AppScreen, e?: Expert, q?: string, r?: Resource, c?: Circle, stories?: any[], index?: number, member?: Member) => void;
+   goBack: () => void;
+   handleLogout: () => void;
    member: Member | null;
    language: 'en' | 'ar' | 'fr';
    isDarkMode: boolean;
    toggleDarkMode: () => void;
 }
 
-const UserProfile: React.FC<Props> = ({ navigate, member, language, isDarkMode, toggleDarkMode }) => {
+const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, language, isDarkMode, toggleDarkMode }) => {
    const [activeTab, setActiveTab] = useState<'Journey' | 'Board' | 'Vault' | 'Settings'>('Journey');
    const [showLikeCelebration, setShowLikeCelebration] = useState(false);
    const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -265,14 +267,9 @@ const UserProfile: React.FC<Props> = ({ navigate, member, language, isDarkMode, 
       setTimeout(() => setShowLikeCelebration(false), 2000);
    };
 
-   const handleLogout = async () => {
-      try {
-         await signOut(auth);
-         setShowLogoutModal(false);
-         navigate(AppScreen.LANDING);
-      } catch (error) {
-         console.error("Logout error:", error);
-      }
+   const onLogoutConfirm = async () => {
+      setShowLogoutModal(false);
+      handleLogout();
    };
 
    const handleSaveSettings = async () => {
@@ -321,7 +318,7 @@ const UserProfile: React.FC<Props> = ({ navigate, member, language, isDarkMode, 
 
                <div className="absolute top-8 left-6 right-6 flex items-center justify-between z-10">
                   <button
-                     onClick={() => navigate(AppScreen.USER_DASHBOARD)}
+                     onClick={goBack}
                      className="size-11 flex items-center justify-center rounded-2xl crystal-glass border border-white/20 text-slate-900 dark:text-white active:scale-90 transition-all shadow-lg"
                   >
                      <span className={`material-symbols-outlined ${language === 'ar' ? 'rotate-180' : ''}`}>arrow_back_ios_new</span>
@@ -676,7 +673,7 @@ const UserProfile: React.FC<Props> = ({ navigate, member, language, isDarkMode, 
 
                      <div className="w-full flex flex-col gap-3">
                         <button
-                           onClick={handleLogout}
+                           onClick={onLogoutConfirm}
                            className="w-full h-16 bg-red-500 text-white rounded-3xl font-black text-[11px] uppercase tracking-widest shadow-2xl shadow-red-500/30 active:scale-95 transition-all"
                         >
                            {t.logout}

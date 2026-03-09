@@ -4,10 +4,11 @@ import { AppScreen } from '../types';
 
 interface Props {
    navigate: (screen: AppScreen) => void;
+   goBack: () => void;
    language: 'en' | 'ar' | 'fr';
 }
 
-const SecurityPrivacy: React.FC<Props> = ({ navigate, language }) => {
+const SecurityPrivacy: React.FC<Props> = ({ navigate, goBack, language }) => {
    const [security, setSecurity] = useState({
       twoFactor: false,
       biometrics: true,
@@ -101,7 +102,7 @@ const SecurityPrivacy: React.FC<Props> = ({ navigate, language }) => {
          <header className="sticky top-0 z-50 bg-white/90 dark:bg-background-dark/95 backdrop-blur-md px-6 pt-12 pb-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-4">
                <button
-                  onClick={() => navigate(AppScreen.USER_PROFILE)}
+                  onClick={goBack}
                   className="size-11 flex items-center justify-center rounded-2xl bg-slate-100 dark:bg-white/5 border border-transparent dark:border-white/5 active:scale-90 transition-all"
                >
                   <span className="material-symbols-outlined text-slate-500">arrow_back_ios_new</span>

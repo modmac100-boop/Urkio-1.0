@@ -102,6 +102,7 @@ const DEFAULT_EXPERT: Expert = {
 
 const App: React.FC = () => {
   const [currentScreen, setCurrentScreen] = useState<AppScreen>(AppScreen.SPLASH);
+  const [screenHistory, setScreenHistory] = useState<AppScreen[]>([]);
   const [userRole, setUserRole] = useState<UserRole>('USER');
   const [language, setLanguage] = useState<'en' | 'ar' | 'fr'>('en');
   const [session, setSession] = useState<any>(null);
@@ -145,6 +146,7 @@ const App: React.FC = () => {
       } else {
         setSession(null);
         setUserRole('USER');
+        setScreenHistory([]);
 
         // If user logs out and is on a protected screen, redirect to Landing
         const publicScreens = [
@@ -196,13 +198,42 @@ const App: React.FC = () => {
     if (stories) setActiveStories(stories);
     if (storyIndex !== undefined) setInitialStoryIndex(storyIndex);
     if (query !== undefined) setSearchQuery(query);
+    
+    setScreenHistory(prev => [...prev, currentScreen]);
     setCurrentScreen(screen);
     window.scrollTo(0, 0);
+  };
+
+  const goBack = () => {
+    if (screenHistory.length > 0) {
+      const newHistory = [...screenHistory];
+      const previousScreen = newHistory.pop()!;
+      setScreenHistory(newHistory);
+      setCurrentScreen(previousScreen);
+      window.scrollTo(0, 0);
+    } else {
+      // Fallback if no history
+      setCurrentScreen(AppScreen.USER_DASHBOARD);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await auth.signOut();
+      setSession(null);
+      setUserRole('USER');
+      setScreenHistory([]);
+      setCurrentScreen(AppScreen.LANDING);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
   };
 
   const renderScreen = () => {
     const commonProps = {
       navigate,
+      goBack,
+      handleLogout,
       language,
       setLanguage,
       isDarkMode,
