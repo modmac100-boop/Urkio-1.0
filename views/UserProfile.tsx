@@ -5,7 +5,7 @@ import { BottomNav } from '../components/Navigation';
 import { Avatar } from '../components/Avatar';
 import { auth, db } from '../services/firebase';
 import { signOut } from 'firebase/auth';
-import { collection, query, where, orderBy, onSnapshot, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, orderBy, onSnapshot, doc, setDoc } from 'firebase/firestore';
 
 interface Milestone {
    id: string;
@@ -77,6 +77,8 @@ interface Props {
 
 const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, language, isDarkMode, toggleDarkMode }) => {
    const [activeTab, setActiveTab] = useState<'Journey' | 'Board' | 'Vault' | 'Settings'>('Journey');
+   const [isEditMode, setIsEditMode] = useState(false);
+   const [saveError, setSaveError] = useState('');
    const [showLikeCelebration, setShowLikeCelebration] = useState(false);
    const [showLogoutModal, setShowLogoutModal] = useState(false);
    const [showToast, setShowToast] = useState(false);
@@ -112,7 +114,10 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
       age: '',
       location: '',
       gender: '',
-      occupation: ''
+      occupation: '',
+      specialties: [] as string[],
+      verificationStatus: 'unverified' as 'unverified' | 'pending' | 'verified',
+      credentials: '',
    });
 
    const [newSkill, setNewSkill] = useState('');
@@ -136,7 +141,10 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                age: data.age || '',
                location: data.location || '',
                gender: data.gender || '',
-               occupation: data.occupation || ''
+               occupation: data.occupation || '',
+               specialties: data.specialties || [],
+               verificationStatus: (data.verificationStatus as 'unverified' | 'pending' | 'verified') || 'unverified',
+               credentials: data.credentials || '',
             });
          }
       });
@@ -278,13 +286,14 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
       if (!user) return;
 
       setIsSaving(true);
+      setSaveError('');
       try {
-         // Split name back into first and family if possible
-         const nameParts = formData.name.split(' ');
+         const nameParts = formData.name.trim().split(' ');
          const firstName = nameParts[0] || '';
          const familyName = nameParts.slice(1).join(' ') || '';
 
-         await updateDoc(doc(db, 'profiles', user.uid), {
+         // setDoc with merge = true acts as upsert (creates if not exists, updates if exists)
+         await setDoc(doc(db, 'profiles', user.uid), {
             first_name: firstName,
             family_name: familyName,
             phone: formData.phone,
@@ -294,18 +303,38 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
             age: formData.age,
             location: formData.location,
             gender: formData.gender,
-            occupation: formData.occupation
-         });
+            occupation: formData.occupation,
+            specialties: formData.specialties,
+            credentials: formData.credentials,
+            // Only update verificationStatus if submitting credentials for first time
+            ...(formData.verificationStatus === 'unverified' && formData.credentials
+               ? { verificationStatus: 'pending' }
+               : {}),
+            updatedAt: new Date().toISOString(),
+         }, { merge: true });
 
+         setIsEditMode(false);
          setShowToast(true);
          setTimeout(() => setShowToast(false), 3000);
          setActiveTab('Journey');
          window.scrollTo(0, 0);
-      } catch (err) {
-         console.error("Error saving profile settings:", err);
+      } catch (err: any) {
+         console.error('Error saving profile:', err);
+         setSaveError(err?.message || 'Failed to save. Please try again.');
       } finally {
          setIsSaving(false);
       }
+   };
+
+   const addSpecialty = (val: string) => {
+      const trimmed = val.trim();
+      if (trimmed && !formData.specialties.includes(trimmed)) {
+         setFormData(prev => ({ ...prev, specialties: [...prev.specialties, trimmed] }));
+      }
+   };
+
+   const removeSpecialty = (s: string) => {
+      setFormData(prev => ({ ...prev, specialties: prev.specialties.filter(x => x !== s) }));
    };
 
    const totalLikes = isOwnProfile ? userPosts.reduce((acc, p) => acc + (p.likes || 0), 0) : currentUser.likesReceived;
@@ -437,6 +466,28 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
 
                   {activeTab === 'Journey' ? (
                      <>
+                        {/* Verification Status Badge */}
+                        <div className="flex items-center gap-3 px-2">
+                           {formData.verificationStatus === 'verified' && (
+                              <div className="flex items-center gap-2 px-5 py-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full">
+                                 <span className="material-symbols-outlined text-emerald-500 text-base">verified</span>
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-emerald-500">Verified Member</span>
+                              </div>
+                           )}
+                           {formData.verificationStatus === 'pending' && (
+                              <div className="flex items-center gap-2 px-5 py-2 bg-amber-500/10 border border-amber-500/30 rounded-full">
+                                 <span className="material-symbols-outlined text-amber-500 text-base">pending</span>
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-amber-500">Verification Pending</span>
+                              </div>
+                           )}
+                           {formData.verificationStatus === 'unverified' && (
+                              <div className="flex items-center gap-2 px-5 py-2 bg-slate-200/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-full">
+                                 <span className="material-symbols-outlined text-slate-400 text-base">shield</span>
+                                 <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Not Yet Verified</span>
+                              </div>
+                           )}
+                        </div>
+
                         <section className="crystal-glass p-10 rounded-6xl border border-white/20 shadow-2xl space-y-10">
                            <div className="space-y-5">
                               <div className="flex items-center gap-4">
@@ -550,6 +601,21 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                      </div>
                   ) : (
                      <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4">
+
+                        {/* Edit Mode Toggle Banner */}
+                        <div className={`flex items-center justify-between p-6 rounded-4xl border transition-all ${isEditMode ? 'bg-primary/10 border-primary/30' : 'bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10'}`}>
+                           <div>
+                              <p className="text-sm font-black text-slate-900 dark:text-white">{isEditMode ? '✏️ Editing Profile' : '👁 View Mode'}</p>
+                              <p className="text-[10px] text-slate-500 mt-1">{isEditMode ? 'Changes save to Firebase on submit' : 'Toggle to edit your profile'}</p>
+                           </div>
+                           <button
+                              onClick={() => setIsEditMode(e => !e)}
+                              className={`h-10 px-6 rounded-3xl font-black text-[10px] uppercase tracking-widest transition-all active:scale-90 ${isEditMode ? 'bg-primary text-white shadow-lg shadow-primary/30' : 'bg-white dark:bg-white/10 text-slate-700 dark:text-white border border-slate-200 dark:border-white/10'}`}
+                           >
+                              {isEditMode ? 'Cancel' : 'Edit'}
+                           </button>
+                        </div>
+
                         {/* Theme Selection - Surface Glass */}
                         <section className="crystal-glass p-10 rounded-6xl border border-white/20 shadow-2xl space-y-10">
                            <div className="flex items-center gap-4 border-b border-black/5 dark:border-white/10 pb-6">
@@ -571,7 +637,7 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                         </section>
 
                         {/* Personal Info Group */}
-                        <section className="crystal-glass p-10 rounded-6xl border border-white/20 shadow-2xl space-y-10">
+                        <section className={`crystal-glass p-10 rounded-6xl border shadow-2xl space-y-10 transition-all ${isEditMode ? 'border-primary/30' : 'border-white/20'}`}>
                            <div className="flex items-center gap-4 border-b border-black/5 dark:border-white/10 pb-6">
                               <span className="material-symbols-outlined text-primary text-2xl">person</span>
                               <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">{t.personalInfo}</h3>
@@ -583,7 +649,20 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                  <input
                                     value={formData.name}
                                     onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white"
+                                    disabled={!isEditMode}
+                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white disabled:opacity-60 disabled:cursor-not-allowed"
+                                 />
+                              </div>
+
+                              <div className="space-y-3">
+                                 <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500 ml-2">Bio / Philosophy</label>
+                                 <textarea
+                                    value={formData.bio}
+                                    onChange={e => setFormData({ ...formData, bio: e.target.value })}
+                                    disabled={!isEditMode}
+                                    rows={3}
+                                    className="w-full px-8 py-5 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-medium dark:text-white resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+                                    placeholder="Your philosophy and personal mission..."
                                  />
                               </div>
                               <div className="grid grid-cols-2 gap-6">
@@ -593,7 +672,8 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                        type="number"
                                        value={formData.age}
                                        onChange={e => setFormData({ ...formData, age: e.target.value })}
-                                       className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white"
+                                       disabled={!isEditMode}
+                                       className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white disabled:opacity-60"
                                     />
                                  </div>
                                  <div className="space-y-3">
@@ -601,7 +681,8 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                     <select
                                        value={formData.gender}
                                        onChange={e => setFormData({ ...formData, gender: e.target.value })}
-                                       className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white appearance-none"
+                                       disabled={!isEditMode}
+                                       className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white appearance-none disabled:opacity-60"
                                     >
                                        <option value="Male">Male</option>
                                        <option value="Female">Female</option>
@@ -616,7 +697,8 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                  <input
                                     value={formData.location}
                                     onChange={e => setFormData({ ...formData, location: e.target.value })}
-                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white"
+                                    disabled={!isEditMode}
+                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white disabled:opacity-60"
                                  />
                               </div>
                               <div className="space-y-3">
@@ -624,7 +706,8 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                  <input
                                     value={formData.occupation}
                                     onChange={e => setFormData({ ...formData, occupation: e.target.value })}
-                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white"
+                                    disabled={!isEditMode}
+                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white disabled:opacity-60"
                                  />
                               </div>
                               <div className="space-y-3">
@@ -632,30 +715,123 @@ const UserProfile: React.FC<Props> = ({ navigate, goBack, handleLogout, member, 
                                  <input
                                     value={formData.phone}
                                     onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white"
+                                    disabled={!isEditMode}
+                                    className="w-full h-16 px-8 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-base font-black dark:text-white disabled:opacity-60"
                                     placeholder="+1..."
                                  />
                               </div>
                            </div>
                         </section>
 
-                        {/* Save Button */}
-                        <div className="pt-6">
-                           <button
-                              onClick={handleSaveSettings}
-                              disabled={isSaving}
-                              className="w-full h-20 urkio-gradient rounded-6xl text-white font-black text-sm uppercase tracking-widest shadow-3xl shadow-primary/40 flex items-center justify-center gap-4 active:scale-[0.95] transition-all crystal-btn"
-                           >
-                              {isSaving ? (
-                                 <div className="size-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
-                              ) : (
-                                 <>
-                                    {t.saveChanges}
-                                    <span className="material-symbols-outlined text-2xl">cloud_sync</span>
-                                 </>
+                        {/* Specialties Section */}
+                        <section className={`crystal-glass p-10 rounded-6xl border shadow-2xl space-y-8 transition-all ${isEditMode ? 'border-primary/30' : 'border-white/20'}`}>
+                           <div className="flex items-center gap-4 border-b border-black/5 dark:border-white/10 pb-6">
+                              <span className="material-symbols-outlined text-primary text-2xl">stars</span>
+                              <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">Specialties</h3>
+                           </div>
+                           <div className="flex flex-wrap gap-3 min-h-[40px]">
+                              {formData.specialties.map(s => (
+                                 <div key={s} className="flex items-center gap-2 px-5 py-2 bg-primary/10 border border-primary/20 rounded-full">
+                                    <span className="text-[11px] font-black text-primary">{s}</span>
+                                    {isEditMode && (
+                                       <button onClick={() => removeSpecialty(s)} className="text-primary/60 hover:text-red-500 transition-colors ml-1">
+                                          <span className="material-symbols-outlined text-sm">close</span>
+                                       </button>
+                                    )}
+                                 </div>
+                              ))}
+                              {formData.specialties.length === 0 && !isEditMode && (
+                                 <p className="text-xs text-slate-400 italic">No specialties added yet.</p>
                               )}
-                           </button>
-                        </div>
+                           </div>
+                           {isEditMode && (
+                              <div className="flex gap-3">
+                                 <input
+                                    id="specialty-input"
+                                    placeholder="e.g. Mindfulness, Breathwork..."
+                                    className="flex-1 h-14 px-6 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 text-sm font-medium dark:text-white"
+                                    onKeyDown={e => {
+                                       if (e.key === 'Enter') {
+                                          addSpecialty((e.target as HTMLInputElement).value);
+                                          (e.target as HTMLInputElement).value = '';
+                                       }
+                                    }}
+                                 />
+                                 <button
+                                    onClick={() => {
+                                       const input = document.getElementById('specialty-input') as HTMLInputElement;
+                                       addSpecialty(input.value);
+                                       input.value = '';
+                                    }}
+                                    className="h-14 px-6 bg-primary text-white rounded-3xl font-black text-[10px] uppercase tracking-widest active:scale-90 transition-all"
+                                 >Add</button>
+                              </div>
+                           )}
+                        </section>
+
+                        {/* Credentials & Verification Section */}
+                        <section className={`crystal-glass p-10 rounded-6xl border shadow-2xl space-y-8 transition-all ${isEditMode ? 'border-primary/30' : 'border-white/20'}`}>
+                           <div className="flex items-center justify-between border-b border-black/5 dark:border-white/10 pb-6">
+                              <div className="flex items-center gap-4">
+                                 <span className="material-symbols-outlined text-primary text-2xl">verified_user</span>
+                                 <h3 className="text-xs font-black uppercase tracking-[0.4em] text-slate-500 dark:text-slate-400">Verification Status</h3>
+                              </div>
+                              <div className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${formData.verificationStatus === 'verified'
+                                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/30'
+                                    : formData.verificationStatus === 'pending'
+                                       ? 'bg-amber-500/10 text-amber-500 border border-amber-500/30'
+                                       : 'bg-slate-200 dark:bg-white/10 text-slate-500 border border-slate-300 dark:border-white/10'
+                                 }`}>
+                                 {formData.verificationStatus === 'verified' ? '✓ Verified' : formData.verificationStatus === 'pending' ? '⏳ Pending Review' : 'Not Verified'}
+                              </div>
+                           </div>
+                           <div className="space-y-3">
+                              <label className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 dark:text-slate-500 ml-2">Professional Credentials</label>
+                              <textarea
+                                 value={formData.credentials}
+                                 onChange={e => setFormData({ ...formData, credentials: e.target.value })}
+                                 disabled={!isEditMode || formData.verificationStatus === 'verified'}
+                                 rows={3}
+                                 placeholder="e.g. Certified Life Coach (ICF), MSc Psychology..."
+                                 className="w-full px-8 py-5 bg-slate-100 dark:bg-white/5 border-none rounded-3xl focus:ring-4 focus:ring-primary/20 transition-all text-sm font-medium dark:text-white resize-none disabled:opacity-60 disabled:cursor-not-allowed"
+                              />
+                              {isEditMode && formData.verificationStatus === 'unverified' && (
+                                 <p className="text-[10px] text-slate-400 ml-2">💡 Submitting credentials will trigger a verification review by Urkio.</p>
+                              )}
+                              {formData.verificationStatus === 'verified' && (
+                                 <p className="text-[10px] text-emerald-500 ml-2">✓ Your credentials have been verified by Urkio.</p>
+                              )}
+                           </div>
+                        </section>
+
+                        {/* Save Button — only visible in edit mode */}
+                        {isEditMode && (
+                           <div className="pt-6 space-y-4">
+                              {saveError && (
+                                 <div className="flex items-center gap-3 p-5 bg-red-500/10 border border-red-500/20 rounded-3xl">
+                                    <span className="material-symbols-outlined text-red-500">error</span>
+                                    <p className="text-xs font-medium text-red-500">{saveError}</p>
+                                 </div>
+                              )}
+                              <button
+                                 onClick={handleSaveSettings}
+                                 disabled={isSaving}
+                                 className="w-full h-20 urkio-gradient rounded-6xl text-white font-black text-sm uppercase tracking-widest shadow-3xl shadow-primary/40 flex items-center justify-center gap-4 active:scale-[0.95] transition-all crystal-btn disabled:opacity-60"
+                              >
+                                 {isSaving ? (
+                                    <>
+                                       <div className="size-6 border-4 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                       <span>Saving to Firebase...</span>
+                                    </>
+                                 ) : (
+                                    <>
+                                       {t.saveChanges}
+                                       <span className="material-symbols-outlined text-2xl">cloud_sync</span>
+                                    </>
+                                 )}
+                              </button>
+                           </div>
+                        )}
                      </div>
                   )}
                </section>
