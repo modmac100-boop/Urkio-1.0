@@ -86,6 +86,8 @@ import SpecialistSelector from './views/SpecialistSelector';
 import NotificationsView from './views/NotificationsView';
 import BoardAdminPanel from './views/BoardAdminPanel';
 import FounderAdminPanel from './views/FounderAdminPanel';
+import HealingCircleHome from './views/HealingCircleHome';
+import UrkioSocialEngine from './services/UrkioSocialEngine';
 
 const DEFAULT_EXPERT: Expert = {
   id: 'exp_self',
@@ -156,6 +158,7 @@ const App: React.FC = () => {
       if (user) {
         setSession({ user });
         fetchUserProfile(user.uid);
+        UrkioSocialEngine.initPresence(user.uid);
       } else {
         setSession(null);
         setUserRole('USER');
@@ -256,7 +259,8 @@ const App: React.FC = () => {
       toggleDarkMode,
       userRole,
       expertDraft,
-      setExpertDraft
+      setExpertDraft,
+      currentUser: session
     };
 
     // If user is logged in and at starting login/landing screens, push to dashboard
@@ -274,7 +278,7 @@ const App: React.FC = () => {
       if (userRole === 'EXPERT') {
         return <ExpertDashboard {...commonProps} />;
       }
-      return <UserDashboard {...commonProps} />;
+      return <HealingCircleHome {...commonProps} />;
     }
 
     switch (currentScreen) {
@@ -283,7 +287,7 @@ const App: React.FC = () => {
           if (session) {
             if (userRole === 'EXPERT') navigate(AppScreen.EXPERT_DASHBOARD);
             else if (userRole === 'MANAGEMENT' || userRole === 'BOARD' || userRole === 'FOUNDER') navigate(AppScreen.MANAGEMENT_DASHBOARD);
-            else navigate(AppScreen.USER_DASHBOARD);
+            else navigate(AppScreen.HEALING_CIRCLE_HOME);
           }
           else navigate(AppScreen.LANDING);
         }} />;
@@ -571,6 +575,9 @@ const App: React.FC = () => {
 
       case AppScreen.HEALING_JOURNEY:
         return <HealingJourney {...commonProps} />;
+
+      case AppScreen.HEALING_CIRCLE_HOME:
+        return <HealingCircleHome {...commonProps} />;
 
       default:
         return <UserDashboard {...commonProps} />;

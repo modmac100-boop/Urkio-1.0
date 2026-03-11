@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, ChangeEvent } from 'react';
 import { AppScreen } from '../types';
 
 interface Props {
@@ -12,7 +12,7 @@ type VisibilityType = 'public' | 'followers' | 'private';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../services/firebase';
 
-const CreatePost: React.FC<Props> = ({ navigate, language }) => {
+const CreatePost = ({ navigate, language }: Props) => {
   const [content, setContent] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [visibility, setVisibility] = useState<VisibilityType>('public');
@@ -32,7 +32,7 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
     });
   };
 
-  const handleAudioSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAudioSelect = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
@@ -140,6 +140,18 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
     { id: 'audio', icon: 'mic', label: t.media[4], action: () => audioInputRef.current?.click() },
   ];
 
+  const handleFileSelect = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const b64 = await blobToBase64(file);
+      setPreviewUrl(b64);
+    } catch (err) {
+      console.error(err);
+      setError("Failed to process file.");
+    }
+  };
+
   return (
     <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 max-w-md mx-auto shadow-2xl overflow-hidden font-sans">
       <header className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-6 pt-10 pb-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
@@ -238,7 +250,7 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
           </div>
         </section>
 
-        <input type="file" ref={fileInputRef} className="hidden" accept="image/*,video/*" />
+        <input type="file" ref={fileInputRef} className="hidden" accept="image/*,video/*" onChange={handleFileSelect} />
         <input type="file" ref={audioInputRef} className="hidden" accept="audio/*" onChange={handleAudioSelect} />
       </main>
 

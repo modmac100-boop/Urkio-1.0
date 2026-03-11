@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AppScreen, ChatMessage, Expert } from '../types';
 import { BottomNav } from '../components/Navigation';
-import { getAiResponse } from '../services/geminiService';
+import { getAiResponse, analyzeUserSituation } from '../services/geminiService';
 
 interface Props {
   navigate: (screen: AppScreen, e?: Expert) => void;
@@ -150,7 +150,6 @@ const AiGuide: React.FC<Props> = ({ navigate, language }) => {
       lastReflection: "I've been feeling a lot of pressure at work lately and it's affecting my sleep."
     };
 
-    const { analyzeUserSituation } = await import('../services/geminiService');
     const analysis = await analyzeUserSituation(mockUserData);
 
     const estimationMsg: ChatMessage = {

@@ -6,7 +6,7 @@ interface NavProps {
   currentScreen: AppScreen;
   navigate: (screen: AppScreen) => void;
   role: 'USER' | 'EXPERT' | 'MANAGEMENT';
-  language?: 'en' | 'ar';
+  language?: 'en' | 'ar' | 'fr';
 }
 
 export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, language = 'en' }) => {
@@ -73,8 +73,8 @@ export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, l
   if (role === 'USER') {
     return (
       <nav className={navClasses}>
-        <NavItem screen={AppScreen.USER_DASHBOARD} icon="home" label={t.home} isActive={currentScreen === AppScreen.USER_DASHBOARD} />
-        <NavItem screen={AppScreen.URKIO_SOCIAL_HUB} icon="hub" label={t.hub} isActive={currentScreen === AppScreen.URKIO_SOCIAL_HUB} />
+        <NavItem screen={AppScreen.HEALING_CIRCLE_HOME} icon="home" label={t.home} isActive={currentScreen === AppScreen.HEALING_CIRCLE_HOME} />
+        <NavItem screen={AppScreen.COMMUNITY_FEED} icon="forum" label={t.feed} isActive={currentScreen === AppScreen.COMMUNITY_FEED} />
         <NavItem screen={AppScreen.AI_GUIDE} icon="smart_toy" label={t.guide} isActive={currentScreen === AppScreen.AI_GUIDE} />
 
         <RecordButton />

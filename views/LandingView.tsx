@@ -50,6 +50,7 @@ const LandingView: React.FC<Props> = ({ onJoin, navigate, language, setLanguage 
 
   const t = language === 'ar' ? {
     welcome: 'مرحباً بكم في',
+    brand: 'دائرة الشفاء',
     memberLabel: 'انضم كعضو',
     expertLabel: 'انضم كخبير',
     alreadyMember: 'هل أنت عضو بالفعل؟',
@@ -66,6 +67,7 @@ const LandingView: React.FC<Props> = ({ onJoin, navigate, language, setLanguage 
     luxe: 'Luxe'
   } : {
     welcome: 'Welcome to',
+    brand: 'Healing Circle',
     memberLabel: 'Join as Member',
     expertLabel: 'Join as Expert',
     alreadyMember: 'Already a member?',
@@ -117,10 +119,10 @@ const LandingView: React.FC<Props> = ({ onJoin, navigate, language, setLanguage 
           </div>
           <div className="flex flex-col items-center text-center w-full">
             <h1 className={`text-[48px] font-black leading-[0.95] text-center tracking-tighter mb-4 font-display transition-colors duration-1000 no-mirror ${isLuxe ? 'text-white' : 'text-slate-900'}`}>
-              {t.welcome} <br /><span className="font-bold text-urkio-magenta">Urkio</span>
+              {t.welcome} <br /><span className="font-bold text-urkio-magenta">{t.brand}</span>
             </h1>
             <p className={`text-[11px] font-black tracking-[0.6em] uppercase text-center transition-all duration-1000 no-mirror ${isLuxe ? 'text-primary' : 'text-slate-400 opacity-80'}`}>
-              Your Journey Within
+              Social Healing App
             </p>
             <div className={`mt-4 px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest ${isLuxe ? 'border-white/10 text-white/40' : 'border-slate-200 text-slate-400'}`}>
               Live Domain Connected v1.0.1
