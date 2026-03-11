@@ -58,6 +58,8 @@ import OnboardingIntro from './views/OnboardingIntro';
 import ExpertSchedule from './views/ExpertSchedule';
 import ConsultationRoom from './views/ConsultationRoom';
 import SessionSummary from './views/SessionSummary';
+import UrkioSocialHub from './views/UrkioSocialHub';
+import HealingJourney from './views/HealingJourney';
 import ExpertSessionRecap from './views/ExpertSessionRecap';
 import ResourceLibrary from './views/ResourceLibrary';
 import ResourceDetails from './views/ResourceDetails';
@@ -514,7 +516,7 @@ const App: React.FC = () => {
         return <LiveQa {...commonProps} />;
 
       case AppScreen.USER_PROFILE:
-        return <UserProfile {...commonProps} member={selectedMember} />;
+        return <UrkioSocialHub {...commonProps} />;
 
       case AppScreen.CREATE_POST:
         return <CreatePost {...commonProps} language={language} />;
@@ -563,6 +565,12 @@ const App: React.FC = () => {
 
       case AppScreen.FOUNDER_ADMIN_PANEL:
         return <FounderAdminPanel {...commonProps} />;
+
+      case AppScreen.URKIO_SOCIAL_HUB:
+        return <UrkioSocialHub {...commonProps} />;
+
+      case AppScreen.HEALING_JOURNEY:
+        return <HealingJourney {...commonProps} />;
 
       default:
         return <UserDashboard {...commonProps} />;

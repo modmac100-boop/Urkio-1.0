@@ -12,6 +12,7 @@ interface NavProps {
 export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, language = 'en' }) => {
   const t = language === 'ar' ? {
     home: 'الرئيسية',
+    hub: 'المركز الاجتماعي',
     feed: 'المنشورات',
     guide: 'المرشد',
     inbox: 'الرسائل',
@@ -23,6 +24,7 @@ export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, l
     record: 'سجل'
   } : {
     home: 'Home',
+    hub: 'Social Hub',
     feed: 'Feed',
     guide: 'Guide',
     inbox: 'Inbox',
@@ -37,7 +39,7 @@ export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, l
   const RecordButton = () => (
     <div className="relative -top-5 px-1 group">
       <div className="absolute inset-0 bg-urkio-magenta/15 blur-[15px] rounded-full group-hover:scale-150 transition-transform duration-700"></div>
-      <button 
+      <button
         onClick={() => navigate(AppScreen.VIDEO_RECORDER)}
         className="size-14 rounded-full urkio-gradient text-white flex items-center justify-center border-[3px] border-white/20 backdrop-blur-3xl shadow-[0_8px_25px_rgba(217,70,239,0.3)] crystal-btn active:scale-90 transition-all hover:-translate-y-1 z-10 relative"
       >
@@ -48,8 +50,8 @@ export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, l
   );
 
   const NavItem = ({ screen, icon, label, isActive }: { screen: AppScreen, icon: string, label: string, isActive: boolean }) => (
-    <button 
-      onClick={() => navigate(screen)} 
+    <button
+      onClick={() => navigate(screen)}
       className={`flex flex-col items-center gap-1 transition-all flex-1 py-3 group ${isActive ? 'text-primary' : 'text-slate-400'}`}
     >
       <div className={`relative flex items-center justify-center transition-all duration-500 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
@@ -72,7 +74,7 @@ export const BottomNav: React.FC<NavProps> = ({ currentScreen, navigate, role, l
     return (
       <nav className={navClasses}>
         <NavItem screen={AppScreen.USER_DASHBOARD} icon="home" label={t.home} isActive={currentScreen === AppScreen.USER_DASHBOARD} />
-        <NavItem screen={AppScreen.COMMUNITY_FEED} icon="forum" label={t.feed} isActive={currentScreen === AppScreen.COMMUNITY_FEED} />
+        <NavItem screen={AppScreen.URKIO_SOCIAL_HUB} icon="hub" label={t.hub} isActive={currentScreen === AppScreen.URKIO_SOCIAL_HUB} />
         <NavItem screen={AppScreen.AI_GUIDE} icon="smart_toy" label={t.guide} isActive={currentScreen === AppScreen.AI_GUIDE} />
 
         <RecordButton />

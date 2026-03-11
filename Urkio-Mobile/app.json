@@ -55,7 +55,22 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/[REPLACE_WITH_YOUR_PROJECT_ID]"
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "[REPLACE_WITH_YOUR_PROJECT_ID]"
+      },
+      "firebase": {
+        "projectId": "urkio-65fb0"
+      }
     },
     "plugins": [
       "expo-router",

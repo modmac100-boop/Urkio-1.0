@@ -141,62 +141,56 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
   ];
 
   return (
-    <div className="relative flex h-screen w-full flex-col bg-white dark:bg-background-dark text-slate-900 dark:text-white max-w-md mx-auto shadow-2xl overflow-hidden font-sans">
-      <header className="sticky top-0 z-50 bg-white/90 dark:bg-background-dark/95 backdrop-blur-3xl px-8 pt-12 pb-8 flex items-center justify-between border-b border-white/10">
-        <button onClick={() => navigate(AppScreen.COMMUNITY_FEED)} className="size-12 flex items-center justify-center rounded-2xl crystal-glass active:scale-90 transition-all crystal-btn"><span className="material-symbols-outlined text-2xl">close</span></button>
-        <h2 className="text-xl font-black font-display tracking-tight">{t.header}</h2>
-        <div className="flex flex-col items-end">
-          <button onClick={handlePost} disabled={(!content.trim() && !previewUrl && !audioB64) || isPosting} className="px-8 py-3 urkio-gradient rounded-2xl text-[11px] font-black uppercase tracking-widest text-white shadow-2xl shadow-primary/30 disabled:opacity-30 transition-all active:scale-95 crystal-btn">
-            {isPosting ? t.posting : t.share}
-          </button>
-          {error && <span className="text-red-500 text-xs mt-1 absolute top-20 right-8">{error}</span>}
-        </div>
+    <div className="relative flex h-screen w-full flex-col bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 max-w-md mx-auto shadow-2xl overflow-hidden font-sans">
+      <header className="sticky top-0 z-50 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-6 pt-10 pb-4 flex items-center justify-between border-b border-slate-200 dark:border-slate-800">
+        <button onClick={() => navigate(AppScreen.COMMUNITY_FEED)} className="p-2 -ml-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"><span className="material-symbols-outlined text-2xl">close</span></button>
+        <h2 className="text-lg font-bold tracking-tight">{t.header}</h2>
+        <button onClick={handlePost} disabled={(!content.trim() && !previewUrl && !audioB64) || isPosting} className="px-5 py-2 bg-primary rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-primary/30 disabled:opacity-30 transition-all active:scale-95">
+          {isPosting ? t.posting : t.share}
+        </button>
       </header>
 
-      <main className="flex-1 overflow-y-auto p-8 space-y-8 no-scrollbar">
+      <main className="flex-1 overflow-y-auto p-6 space-y-6 no-scrollbar">
         {/* User Identity Header */}
-        <div className="flex items-center justify-between bg-slate-50 dark:bg-white/5 p-6 rounded-[2.5rem] border border-white/5">
-          <div className="flex items-center gap-5">
-            <div className={`size-14 rounded-2xl overflow-hidden border-2 transition-all duration-500 ${isAnonymous ? 'bg-slate-200 dark:bg-slate-800 border-transparent grayscale' : 'border-primary shadow-lg shadow-primary/20'}`}>
+        <div className="flex items-center justify-between bg-slate-100 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center gap-4">
+            <div className={`size-12 rounded-full overflow-hidden border-2 transition-all ${isAnonymous ? 'bg-slate-300 dark:bg-slate-700 border-transparent' : 'border-primary'}`}>
               {isAnonymous ? (
-                <div className="size-full flex items-center justify-center text-slate-400"><span className="material-symbols-outlined text-3xl">visibility_off</span></div>
+                <div className="size-full flex items-center justify-center text-slate-500"><span className="material-symbols-outlined text-xl">visibility_off</span></div>
               ) : (
-                <img src="https://picsum.photos/seed/u4/100/100" className="size-full object-cover" alt="You" />
+                <img src={auth.currentUser?.photoURL || "https://picsum.photos/seed/u4/100/100"} className="size-full object-cover" alt="You" />
               )}
             </div>
             <div>
-              <h3 className="text-base font-black leading-none mb-1.5">{isAnonymous ? t.anonymous : (auth.currentUser?.displayName || auth.currentUser?.email?.split('@')[0] || 'Unknown')}</h3>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Publishing to Feed</p>
+              <h3 className="text-sm font-bold leading-none mb-1">{isAnonymous ? t.anonymous : (auth.currentUser?.displayName || auth.currentUser?.email?.split('@')[0] || 'Member')}</h3>
+              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Publishing to Feed</p>
             </div>
           </div>
-          <button onClick={() => setIsAnonymous(!isAnonymous)} className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl border transition-all ${isAnonymous ? 'bg-slate-900 text-white' : 'bg-white text-slate-500 border-slate-200'}`}>
-            <span className={`material-symbols-outlined text-[18px] ${isAnonymous ? 'fill-1' : ''}`}>visibility_off</span>
-            <span className="text-[9px] font-black uppercase tracking-widest">{t.anonymous}</span>
+          <button onClick={() => setIsAnonymous(!isAnonymous)} className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-all ${isAnonymous ? 'bg-slate-900 text-white' : 'bg-white text-slate-500 border-slate-200'}`}>
+            <span className="material-symbols-outlined text-sm">visibility_off</span>
+            <span className="text-[9px] font-bold uppercase tracking-widest">{t.anonymous}</span>
           </button>
         </div>
 
         {/* Visibility Protocol Selector */}
-        <section className="space-y-4">
-          <div className="flex items-center gap-2 px-1">
-            <span className="material-symbols-outlined text-primary text-sm">security</span>
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">{t.visibilityTitle}</h3>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
+        <section className="space-y-3">
+          <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-500 px-1">{t.visibilityTitle}</h3>
+          <div className="grid grid-cols-3 gap-2">
             {VISIBILITY_OPTIONS.map((opt) => (
               <button
                 key={opt.id}
                 onClick={() => setVisibility(opt.id)}
-                className={`p-4 rounded-[1.8rem] border-2 transition-all flex flex-col items-center text-center gap-2 active:scale-95 ${visibility === opt.id
-                  ? 'bg-primary/5 border-primary shadow-lg shadow-primary/10'
-                  : 'bg-slate-50 dark:bg-white/5 border-transparent opacity-60'
+                className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center text-center gap-1.5 ${visibility === opt.id
+                  ? 'bg-primary/5 border-primary shadow-sm'
+                  : 'bg-slate-100 dark:bg-slate-800/30 border-transparent opacity-60'
                   }`}
               >
-                <div className={`size-10 rounded-xl flex items-center justify-center transition-colors ${visibility === opt.id ? 'bg-primary text-white shadow-md' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
-                  <span className={`material-symbols-outlined text-xl ${visibility === opt.id ? 'fill-1' : ''}`}>{opt.icon}</span>
+                <div className={`size-9 rounded-lg flex items-center justify-center transition-colors ${visibility === opt.id ? 'bg-primary text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'}`}>
+                  <span className="material-symbols-outlined text-lg">{opt.icon}</span>
                 </div>
                 <div>
-                  <p className={`text-[10px] font-black uppercase leading-none mb-0.5 ${visibility === opt.id ? 'text-primary' : 'text-slate-500'}`}>{opt.label}</p>
-                  <p className="text-[8px] font-bold text-slate-400 uppercase tracking-tighter whitespace-nowrap">{opt.desc}</p>
+                  <p className={`text-[10px] font-bold uppercase leading-none mb-0.5 ${visibility === opt.id ? 'text-primary' : 'text-slate-500'}`}>{opt.label}</p>
+                  <p className="text-[8px] font-medium text-slate-400 uppercase tracking-tighter whitespace-nowrap">{opt.desc}</p>
                 </div>
               </button>
             ))}
@@ -204,27 +198,41 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
         </section>
 
         {/* Text Input Area */}
-        <textarea autoFocus value={content} onChange={(e) => setContent(e.target.value)} className="w-full h-40 bg-transparent border-none p-0 text-xl font-medium placeholder:text-slate-300 dark:placeholder:text-slate-700 focus:ring-0 leading-relaxed text-start resize-none text-slate-900 dark:text-white" placeholder={t.placeholder} />
+        <textarea
+          autoFocus
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="w-full h-48 bg-transparent border-none p-0 text-lg font-medium placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:ring-0 leading-relaxed resize-none text-slate-900 dark:text-white"
+          placeholder={t.placeholder}
+        />
 
-        {/* Audio Preview Area */}
+        {/* Audio Preview */}
         {audioB64 && (
-          <div className="relative z-20 w-full mb-4">
-            <audio src={audioB64} controls className="w-full rounded-2xl grayscale hue-rotate-[280deg]" />
-            <button onClick={() => setAudioB64(null)} className="absolute -top-3 -right-3 size-8 bg-red-500 rounded-full text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all z-30">
-              <span className="material-symbols-outlined text-sm">close</span>
-            </button>
+          <div className="relative w-full p-4 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center gap-3">
+            <span className="material-symbols-outlined text-primary">mic</span>
+            <div className="flex-1 h-1 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div className="w-1/3 h-full bg-primary"></div>
+            </div>
+            <button onClick={() => setAudioB64(null)} className="text-slate-400 hover:text-rose-500"><span className="material-symbols-outlined">delete</span></button>
           </div>
         )}
 
-        {/* Enhanced Media Selector Section */}
-        <section className="crystal-glass rounded-[3.5rem] p-8 border border-white/20 shadow-2xl space-y-8">
-          <div className="grid grid-cols-5 gap-4">
-            {MEDIA_ACTIONS.map(item => (
-              <button key={item.id} onClick={item.action} className={`flex flex-col items-center gap-3 transition-all hover:scale-105 group active:scale-90 ${item.isSpecial ? 'opacity-100' : 'opacity-60 hover:opacity-100'}`}>
-                <div className={`size-14 rounded-2xl crystal-glass flex items-center justify-center shadow-lg shrink-0 ${item.isSpecial ? 'border-primary/40 bg-primary/5 text-primary' : 'text-slate-500'}`}>
-                  <span className={`material-symbols-outlined text-2xl group-hover:icon-crystal ${item.isSpecial ? 'fill-1' : ''}`}>{item.icon}</span>
-                </div>
-                <span className={`text-[7px] font-black uppercase tracking-widest text-center leading-tight ${item.isSpecial ? 'text-primary' : 'text-slate-500'}`}>{item.label}</span>
+        {/* Media Toolbar */}
+        <section className="bg-slate-100 dark:bg-slate-800/50 rounded-2xl p-4 flex justify-between items-center">
+          <div className="flex gap-4">
+            {MEDIA_ACTIONS.slice(0, 2).map(item => (
+              <button key={item.id} onClick={item.action} className="text-slate-500 hover:text-primary transition-all flex flex-col items-center gap-1">
+                <span className="material-symbols-outlined text-xl">{item.icon}</span>
+                <span className="text-[8px] font-bold uppercase tracking-widest">{item.label.split(' ')[1] || item.label}</span>
+              </button>
+            ))}
+          </div>
+          <div className="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+          <div className="flex gap-4 flex-1 justify-around">
+            {MEDIA_ACTIONS.slice(2).map(item => (
+              <button key={item.id} onClick={item.action} className="text-slate-500 hover:text-primary transition-all flex flex-col items-center gap-1">
+                <span className="material-symbols-outlined text-xl">{item.icon}</span>
+                <span className="text-[8px] font-bold uppercase tracking-widest">{item.label}</span>
               </button>
             ))}
           </div>
@@ -234,12 +242,12 @@ const CreatePost: React.FC<Props> = ({ navigate, language }) => {
         <input type="file" ref={audioInputRef} className="hidden" accept="audio/*" onChange={handleAudioSelect} />
       </main>
 
-      <footer className="p-10 bg-slate-950 text-white relative overflow-hidden border-t border-white/10">
+      <footer className="p-6 bg-slate-950 text-white relative overflow-hidden border-t border-white/10">
         <div className="absolute inset-0 bg-primary/10 blur-[100px] opacity-60"></div>
         <div className="relative z-10 flex items-center gap-6">
-          <div className="size-16 rounded-[2.2rem] crystal-glass flex items-center justify-center text-accent-cyan border border-accent-cyan/30 animate-pulse"><span className="material-symbols-outlined text-4xl fill-1">verified_user</span></div>
+          <div className="size-16 rounded-[2.2rem] flex items-center justify-center text-primary border border-primary/30 animate-pulse"><span className="material-symbols-outlined text-4xl fill-1">verified_user</span></div>
           <div className="flex-1 space-y-1">
-            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-accent-cyan">SAFE COMMUNITY</p>
+            <p className="text-[11px] font-black uppercase tracking-[0.4em] text-primary">SAFE COMMUNITY</p>
             <p className="text-[11px] font-medium text-slate-400 leading-relaxed opacity-80">Insights are moderated by experts to ensure a supportive environment.</p>
           </div>
         </div>
