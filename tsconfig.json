@@ -29,5 +29,11 @@
   "exclude": [
     "Urkio-Mobile",
     "node_modules"
+  ],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    "./App.tsx",
+    "./index.tsx"
   ]
 }
